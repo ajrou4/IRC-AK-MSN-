@@ -1,4 +1,4 @@
-						IRC_MSN
+								IRC_MSN
 Requirements:
 
     Multi-client handling: The server must manage connections from multiple clients without freezing.
