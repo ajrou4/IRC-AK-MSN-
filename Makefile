@@ -3,7 +3,7 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: omakran <omakran@student.42.fr>            +#+  +:+       +#+         #
+#    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/18 18:37:28 by omakran           #+#    #+#              #
 #    Updated: 2024/05/20 01:46:36 by omakran          ###   ########.fr        #
@@ -13,6 +13,8 @@
 NAME = ircserv
 
 SRC = src/main.cpp src/ircserver.cpp src/client.cpp
+
+SRC = src/main.cpp src/ircserver.cpp $(wildcard src/*.cpp)
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
