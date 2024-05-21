@@ -6,74 +6,76 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/20 00:22:09 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/22 00:06:46 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ircserver.hpp"
 
-Server::Server(int port, const std::string& password)
-    : port(port), password(password) {}
+Server::Server(int port, const std::string& password) : port(port), password(password) {
+    initializeServer();
+}
 
 Server::~Server() {
     cleanUp();
 }
 
-// ============ Start ============
-void    Server::start() {
-    initializeServer();
-    pollLoop();
-}
-
 void    Server::initializeServer() {
-    // when a server needs to bind to a particular IP address and port, it needs to provide this information to the OS in a structured way.
     struct sockaddr_in  server_addr;
-    server_addr.sin_family = AF_INET; //  tells the OS what type of addresses it should expect: IPv4.
-    server_addr.sin_port = htons(port); // converts the port number from host's byte order to the network byte order.
-    server_addr.sin_addr.s_addr = INADDR_ANY; // a special constant that allows the server to accept connections on any of the host’s IP addresses.
-    
-    // creating the socket:
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0); // tells the OS to create a TCP/IP socket, 0 is default protocol.
+
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1) {
-        std::cerr << "Socket error: " << strerror(errno) << std::endl; // errno to indicate the error. strerror(errno) returns a string that describes this error.
-        exit (EXIT_FAILURE);
+        std::cerr << "Socket creation error: " << strerror(errno) << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    // binding the socket:
+    // set socket options
+    int opt = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+        std::cerr << "Setsockopt error: " << strerror(errno) << std::endl;
+        close(server_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // set the socket to non-blocking mode
+    if (fcntl(server_fd, F_SETFL, O_NONBLOCK) == -1) {
+        std::cerr << "Fcntl error: " << strerror(errno) << std::endl;
+        close(server_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // bind the socket to the address
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(port);
     if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
         std::cerr << "Bind error: " << strerror(errno) << std::endl;
-        exit (EXIT_FAILURE);
+        close(server_fd);
+        exit(EXIT_FAILURE);
     }
 
-    // listening for connections:
-    //                    SOMAXCONN: the max number of connection the system suppports. 
-    if (listen(server_fd, SOMAXCONN) == -1) {
+    // listen for incoming connections
+    if (listen(server_fd, 10) == -1) {
         std::cerr << "Listen error: " << strerror(errno) << std::endl;
         close(server_fd);
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
-    // setting the socket to Non-Blocking Mode:
-    fcntl(server_fd, F_SETFL, O_NONBLOCK); // to handle multiple clients simultaneously without getting stuck waiting for one operation to complete.
-    
-    // adding the server socket to the polling list:
+    // add the server socket to the polling list
     struct pollfd server_pollfd;
-    server_pollfd.fd = server_fd; //  tells poll that we are interested in monitoring this particular socket.
-    server_pollfd.events = POLLIN; // this indicates that we are interested in knowing when there is data to be read on server_fd, (incoming data).
-    fds.push_back(server_pollfd); // adds server_pollfd to a vector.
+    server_pollfd.fd = server_fd;
+    server_pollfd.events = POLLIN;
+    fds.push_back(server_pollfd);
 }
 
 // main loop of the server:
 void    Server::pollLoop() {
-    // to ensures the server is always ready to handle new connections and messages.
     while (true) {
-        //                      fds.size(): this gives the number of file descriptors being monitored.
-        int ret = poll(&fds[0], fds.size(), -1); // -1:  timeout means it will wait indefinitely for an event.
-        if (ret == -1) {
+        int poll_count = poll(fds.data(), fds.size(), -1);
+        if (poll_count < 0) {
             std::cerr << "Poll error: " << strerror(errno) << std::endl;
             exit(EXIT_FAILURE);
         }
-        // to process the events detected.
         handleEvents();
     }
 }
@@ -81,40 +83,102 @@ void    Server::pollLoop() {
 void    Server::handleEvents() {
     // iterate over all monitored file descriptors.
     for (size_t i = 0; i < fds.size(); i++) {
-        // check if the current file descriptor has a POLLIN even (data to read).
-        // this is a bitwise & operation, if the POLLIN bit is set in revents, it will be non-zero (true).
+        // check if the event is ready for reading.
         if (fds[i].revents & POLLIN) {
             // check if the event is on the server socket (new client connection).
-            if (fds[i].fd == fds[0].fd) {
-                // accept the new client connection.
-                int client_fd = accept(fds[i].fd, NULL, NULL);
-                if (client_fd == -1) {
-                    std::cerr << "Accept error: " << strerror(errno) << std::endl;
-                    continue;
-                }
-                // set the new client socket to non-blocking mode.
-                fcntl(client_fd, F_SETFL, O_NONBLOCK);
-
-                // create a new pollfd structer for the client.
-                struct pollfd   client_pollfd;
-                client_pollfd.fd = client_fd;
-                client_pollfd.events = POLLIN;
-
-                // add the new client to the list of monitored file descriptors.
-                fds.push_back(client_pollfd);
-                // dont't forget to add client.
+            if (fds[i].fd == server_fd) {
+                // if it's the server socket, handle new connection.
+                handleNewConnection();
             } else { // client socket.
+                // otherise, handle client message.
+                handleClientMessage(fds[i].fd);
             }
         }
     }
 }
 
+// accept a new client connection:
+void    Server::handleNewConnection() {
+    struct sockaddr_in  client_addr; // client address structure.
+    socklen_t           client_len = sizeof(client_addr); // lenght of the client address structure.
+    //                  accept the new connection.
+    int                 client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
+    if (client_fd < 0) {
+        std::cerr << "Accept error: " << strerror(errno) << std::endl;
+        return;
+    }
+
+    // set the new client socket to non-blocking mode.
+    if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1) {
+        std::cerr << "Fcntl error: " << strerror(errno) << std::endl;
+        close (client_fd);
+        return;
+    }
+
+    // add the new client to the list of file descriptors to poll
+    struct pollfd       client_pollfd;
+    client_pollfd.fd = client_fd; // client file descriptor.
+    client_pollfd.events = POLLIN; // interested in reading events
+    fds.push_back(client_pollfd); // add to the list of poll file descriptors.
+
+    std::cout << "New connection from " << inet_ntoa(client_addr.sin_addr) << ": " << ntohs(client_addr.sin_port) << std::endl;
+
+    // add the new client to the client map.
+    // clients.insert(std::make_pair(client_fd, Client(client_fd)));
+}
+
+// handle a message from a client:
+void    Server::handleClientMessage(int client_fd) {
+    char    buffer[1024]; // buffer to reading data.
+    // read data from the client.
+    int     bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+
+    if (bytes_read == -1) {
+        std::cerr << "Recv error: " << strerror(errno) << std::endl;
+        return;
+    } else if (bytes_read == 0) {// connection closed by client.
+        close(client_fd);
+    
+        // remove the client from polling list
+        for (std::vector<pollfd>::iterator it = fds.begin(); it != fds.end(); ++it) {
+            if (it->fd == client_fd) {
+                fds.erase(it);
+                break;
+            }
+        }
+        clients.erase(client_fd); // remove the client from the client map
+    } else {
+        buffer[bytes_read] = '\0';
+
+        std::cout << "Received message from client " << client_fd << ": " << buffer << std::endl;
+
+        // pass the message to the client's handleMessage function.
+        std::map<int, Client>::iterator it = clients.find(client_fd);
+        if (it != clients.end()) {
+            it->second.handleMessage(std::string(buffer));
+        }
+    }
+}
+
+// boardcast a message to all clients in a channel
+void    Server::broadcastMessage(const std::string& message, const std::string& channel) {
+    if (channels.find(channel) != channels.end()) {
+        for (size_t i = 0; i < channels[channel].size(); i++)
+        {
+            int client_fd = channels[channel][i];
+            send(client_fd, message.c_str(), message.size(), 0);
+        }
+    } else {
+        std::cerr << "Channel " << channel << " does not exist." << std::endl;
+    }
+}
+
 void    Server::cleanUp() {
+    close (server_fd);
     for (size_t i = 0; i < fds.size(); i++)
     {
         close(fds[i].fd);
     }
     fds.clear();
-    // don't forget to cleare client also.
+    clients.clear();
 }
-
