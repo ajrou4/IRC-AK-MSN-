@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:48:58 by codespace         #+#    #+#             */
-/*   Updated: 2024/05/21 09:51:07 by codespace        ###   ########.fr       */
+/*   Updated: 2024/05/21 10:14:12 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ class Bot
         Bot &operator=(const Bot &copy);
         // accessors
         std::string getName() const;
+        // memeber functions
+        void stratSocket();
 };
 
 #endif
