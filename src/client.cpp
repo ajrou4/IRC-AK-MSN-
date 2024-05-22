@@ -6,21 +6,17 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/21 23:07:45 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/22 15:43:06 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 
-Client::Client(int fd) : fd(fd) {
+Client::Client(int _fd) : fd(_fd) {
     std::cout << "Client created with fd: " << fd << std::endl;
 }
 
-Client::~Client() {
-    if (fd != -1)
-        close(fd);
-    std::cout << "Client with fd:" << fd << std::endl;
-}
+Client::~Client() {}
 
 std::vector<std::string> Client::splitMessage(const std::string& message) {
     std::vector<std::string>    result;
