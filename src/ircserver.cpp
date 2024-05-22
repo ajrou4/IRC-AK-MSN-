@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/22 00:06:46 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/22 15:31:31 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void    Server::handleNewConnection() {
     std::cout << "New connection from " << inet_ntoa(client_addr.sin_addr) << ": " << ntohs(client_addr.sin_port) << std::endl;
 
     // add the new client to the client map.
-    // clients.insert(std::make_pair(client_fd, Client(client_fd)));
+    clients.insert(std::make_pair(client_fd, Client(client_fd)));
 }
 
 // handle a message from a client:
