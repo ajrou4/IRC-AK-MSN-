@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/22 15:43:06 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/23 13:46:01 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hpp"
+#include "../include/client.hpp"
 
 Client::Client(int _fd) : fd(_fd) {
     std::cout << "Client created with fd: " << fd << std::endl;
