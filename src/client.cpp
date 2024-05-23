@@ -76,3 +76,6 @@ void    Client::handlePrivmsg(const std::string& target, const std::string& mess
     // print the private message to the target.
     std::cout << "Private messge to " << target << ": " << message << std::endl; 
 }
+std::string Client::getUserName() const {
+    return username;
+}
