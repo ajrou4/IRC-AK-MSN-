@@ -52,7 +52,25 @@ void    Client::handleMessage(const std::string& message) {
     } else if (command == "PRIVMSG") {
         if (parts.size() > 2)
             handlePrivmsg(parts[1], message.substr(message.find(parts[2])));
-    } else {
+    } 
+    // else if (command == "KICK") {
+    //     if (parts.size() > 1)
+    //         handleKick(parts[1]);
+    // }
+    // else if(commaand == "TOPIC"){
+    //     if(parts.size() > 1)
+    //         handleTopic(parts[1]);
+    // }
+    // else if(command == " INVITE"){
+    //     if(parts.size() > 1)
+    //         handleInvite(parts[1]);
+    // }
+    // else if (command == "MODE") {
+    //     if (parts.size() > 1)
+    //         handleMode(parts[1]);
+    // }
+
+    else {
         std::cerr << "Uknowon command: " << command << std::endl;
     }
 }
