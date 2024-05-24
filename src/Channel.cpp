@@ -97,15 +97,14 @@ void Channel::setTopic(const std::string &topic){
 std::string Channel::getTopic(){
     std::cout << "Topic: "<<this->topic<<std::endl;
 }
-// void Channel::sendPublicMessage(int from_socket, const std::string &message){
-//     std::vector<Client>::iterator it = users.begin();
-//     while(it != users.end())
-//     {
-//         if(it->getSocket() != from_socket)
-//         {
-//             // send message to all users in the channel
-//             std::cout << "Message: "<<message<<std::endl;
-//         }
-//         it++;
-//     }
-// }
+void Channel::sendPublicMessage(int from_socket, const std::string &message){
+    std::vector<Client>::iterator it = users.begin();
+    while(it != users.end())
+    {
+        if(it->getFd() != from_socket)
+        {
+            std::cout << "Message: "<<message<<std::endl;
+        }
+        it++;
+    }
+}

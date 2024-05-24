@@ -6,11 +6,15 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:48:06 by codespace         #+#    #+#             */
-/*   Updated: 2024/05/21 09:48:21 by codespace        ###   ########.fr       */
+/*   Updated: 2024/05/22 18:29:50 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Bot.hpp"
+
 int main()
 {
-    
+    Bot bot;
+    bot.stratSocket();
+    return 0;    
 }

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/22 15:31:31 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/23 13:46:25 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ircserver.hpp"
+#include "../include/ircserver.hpp"
 
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();

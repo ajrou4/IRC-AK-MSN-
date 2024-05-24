@@ -42,6 +42,7 @@ public:
     Client(int fd);
     ~Client();
     std::string                 getUserName() const; // return the client's username.
+    int                        getFd() const; // return the client's file descriptor.
     /* ########################################################
        ---------------- member functions: ---------------------
        ######################################################## */
