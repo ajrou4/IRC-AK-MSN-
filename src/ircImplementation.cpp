@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/25 17:43:15 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/26 00:55:22 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,15 @@
 |                        let's parss each command                       |
  --------------------------------------------------------------------- */ 
 
-void    Server::PASS(int socket, std::string password) {
+void    Server::PASS(int socket, std::string pass) {
+    Client &client = getClient(socket);
     
+    if (client.isAuthenticated()) {
+        sendMessageToClient(socket, ":ircserver 462 You may not register");
+    } else if (pass != password){
+        sendMessageToClient(socket, ":ircserver 464 Invalid password");
+    } else {
+        client.setAuthenticated(true);
+    }
 }
 

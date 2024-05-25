@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/25 17:56:04 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/26 00:54:04 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,49 +48,52 @@ class Server {
     std::map<std::string, commandHandler>   commands;
 
     // ------------------- member functions: ----------------------- 
-    // 1-   initialize the serever socket.
-    void    initializeServer();
-    // 2-   handles events returned by poll().
-    void    handleEvents();
-    // 3-   accept a new client connection.
-    void    handleNewConnection();
-    // 4-   handle a message from client
-    void    handleClientMessage(int client_fd);
-    // 5-   broadcasts a message to all clients in a channel.
-    void    broadcastMessage(const std::string& message, const std::string& channel);
-
-    //      additional helper functions as needed (oziyada mn ras lhmq hh).
-    void    InithandleComands(void);
-
-    //      close all opne sockets and clean up resources:
-    void    cleanUp();
+    // 1-           initialize the serever socket.
+    void            initializeServer();
+    // 2-           handles events returned by poll().
+    void            handleEvents();
+    // 3-           accept a new client connection.
+    void            handleNewConnection();
+    // 4-           handle a message from client
+    void            handleClientMessage(int client_fd);
+    // 5-           broadcasts a message to all clients in a channel.
+    void            broadcastMessage(const std::string& message, const std::string& channel);
+        
+    //              additional helper functions as needed (oziyada mn ras lhmq hh).
+    void            InithandleComands(void);
+        
+    //              close all opne sockets and clean up resources:
+    void            cleanUp();
 
 public:
     // constructor:
     Server(int port, const std::string& password);
 
-    //      main loop for polling and handling events.
-    void    pollLoop();
-    Client& getClient(int fd);
+    //              main loop for polling and handling events.
+    void            pollLoop();
+
+    Client&         getClient(int fd);
+    void            sendMessageToClient(int client_fd, const std::string &message);
+    struct pollfd&  getPollfd(int fd);
 
     // here a function to register the new client.
     // CMD
-    void    PASS(int socket, std::string password);
-    void    NICK(int socket, std::string password);
-    void    USER(int socket, std::string password);
-    void    LIST(int socket, std::string password);
-    void    JOIN(int socket, std::string password);
-    void    PART(int socket, std::string password);
-    void    WHO(int socket, std::string password);
-    void    WHOIS(int socket, std::string password);
-    void    PING(int socket, std::string password);
-    void    PRIVMSG(int socket, std::string password);
-    void    QUIT(int socket, std::string password);
-    void    KICK(int socket, std::string password);
-    void    INVITE(int socket, std::string password);
-    void    TOPIC(int socket, std::string password);
-    void    ISON(int socket, std::string password);
-    void    MODE(int socket, std::string password);
+    void            PASS(int socket, std::string pass);
+    void            NICK(int socket, std::string nickname);
+    void            USER(int socket, std::string user);
+    void            LIST(int socket, std::string list);
+    void            JOIN(int socket, std::string join);
+    void            PART(int socket, std::string part);
+    void            WHO(int socket, std::string who);
+    void            WHOIS(int socket, std::string whois);
+    void            PING(int socket, std::string ping);
+    void            PRIVMSG(int socket, std::string privmsg);
+    void            QUIT(int socket, std::string quit);
+    void            KICK(int socket, std::string kick);
+    void            INVITE(int socket, std::string invite);
+    void            TOPIC(int socket, std::string topic);
+    void            ISON(int socket, std::string ison);
+    void            MODE(int socket, std::string mode);
 
     // destructor:
     ~Server();
