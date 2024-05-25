@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/23 16:53:10 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/25 17:59:43 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,26 @@ Server::~Server() {
     cleanUp();
 }
 
+// initiale the command
+void    Server::InithandleComands(void) {
+    commands["PASS"] = &Server::PASS;
+    commands["NICK"] = &Server::NICK;
+    commands["USER"] = &Server::USER;
+    commands["LIST"] = &Server::LIST;
+    commands["JOIN"] = &Server::JOIN;
+    commands["PART"] = &Server::PART;
+    commands["WHO"] = &Server::WHO;
+    commands["WHOIS"] = &Server::WHOIS;
+    commands["PING"] = &Server::PING;
+    commands["PRIVMSG"] = &Server::PRIVMSG;
+    commands["QUIT"] = &Server::QUIT;
+    commands["KICK"] = &Server::KICK;
+    commands["INVITE"] = &Server::INVITE;
+    commands["TOPIC "] = &Server::TOPIC;
+    commands["ISON"] = &Server::ISON;
+    commands["MODE"] = &Server::MODE;
+}
+
 void    Server::initializeServer() {
     struct sockaddr_in  server_addr;
 
@@ -30,8 +50,8 @@ void    Server::initializeServer() {
     }
 
     // set socket options
-    int opt = 1;
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+    int opt = 1; // this value will be used as the option value for the function
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) { // SO_REUS: allow the socket to bind a port that is in a TIME_WAIT,
         std::cerr << "Setsockopt error: " << strerror(errno) << std::endl;
         close(server_fd);
         exit(EXIT_FAILURE);
@@ -171,6 +191,15 @@ void    Server::broadcastMessage(const std::string& message, const std::string& 
     } else {
         std::cerr << "Channel " << channel << " does not exist." << std::endl;
     }
+}
+
+Client& Server::getClient(int fd) {
+    std::map<int, Client>::iterator it = clients.find(fd);
+    if (it == clients.end()) {
+        std::cerr << "Client not found!" << std::endl;
+        throw std::runtime_error("Client not found");
+    }
+    return it->second;
 }
 
 void    Server::cleanUp() {
