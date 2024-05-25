@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/22 15:31:31 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/23 16:53:10 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ void    Server::handleNewConnection() {
 
 // handle a message from a client:
 void    Server::handleClientMessage(int client_fd) {
-    char    buffer[1024]; // buffer to reading data.
+    char    buffer[4096]; // buffer to reading data.
     // read data from the client.
     int     bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
