@@ -97,6 +97,7 @@ void Channel::setTopic(const std::string &topic){
 std::string Channel::getTopic(){
     std::cout << "Topic: "<<this->topic<<std::endl;
 }
+
 void Channel::sendPublicMessage(int from_socket, const std::string &message){
     std::vector<Client>::iterator it = users.begin();
     while(it != users.end())
@@ -105,6 +106,34 @@ void Channel::sendPublicMessage(int from_socket, const std::string &message){
         {
             std::cout << "Message: "<<message<<std::endl;
         }
+        it++;
+    }
+}
+
+bool Channel::isUserInChannel( std::string &username) {
+    std::vector<Client>::iterator it = users.begin();
+    while(it != users.end())
+    {
+        if(it->getUserName() == username)
+            return true;
+        it++;
+    }
+}
+bool Channel::isOperator( std::string &username){
+    std::vector<Client >::iterator it = oper.begin();
+    while(it != oper.end())
+    {
+       if(it->getUserName() == username)
+            return true;
+        it++;
+    }
+}
+bool Channel::isUserInvited( std::string &username){
+    std::vector<std::string>::iterator it = inviteUser2.begin();
+    while(it != inviteUser2.end())
+    {
+        if(*it == username)
+            return true;
         it++;
     }
 }

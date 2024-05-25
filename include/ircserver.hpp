@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/21 22:39:11 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/25 17:56:04 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ class Server {
     std::map<int, Client>                   clients;
     //                                      map of channel names to list of client file descriptors.
     std::map<std::string, std::vector<int> > channels;
+    //                                      map to store the command
+    typedef void    (Server::*commandHandler)(int, std::string);
+    std::map<std::string, commandHandler>   commands;
 
     // ------------------- member functions: ----------------------- 
     // 1-   initialize the serever socket.
@@ -57,6 +60,7 @@ class Server {
     void    broadcastMessage(const std::string& message, const std::string& channel);
 
     //      additional helper functions as needed (oziyada mn ras lhmq hh).
+    void    InithandleComands(void);
 
     //      close all opne sockets and clean up resources:
     void    cleanUp();
@@ -67,6 +71,26 @@ public:
 
     //      main loop for polling and handling events.
     void    pollLoop();
+    Client& getClient(int fd);
+
+    // here a function to register the new client.
+    // CMD
+    void    PASS(int socket, std::string password);
+    void    NICK(int socket, std::string password);
+    void    USER(int socket, std::string password);
+    void    LIST(int socket, std::string password);
+    void    JOIN(int socket, std::string password);
+    void    PART(int socket, std::string password);
+    void    WHO(int socket, std::string password);
+    void    WHOIS(int socket, std::string password);
+    void    PING(int socket, std::string password);
+    void    PRIVMSG(int socket, std::string password);
+    void    QUIT(int socket, std::string password);
+    void    KICK(int socket, std::string password);
+    void    INVITE(int socket, std::string password);
+    void    TOPIC(int socket, std::string password);
+    void    ISON(int socket, std::string password);
+    void    MODE(int socket, std::string password);
 
     // destructor:
     ~Server();

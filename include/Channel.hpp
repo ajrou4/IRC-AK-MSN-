@@ -30,6 +30,10 @@ class Channel
         std::vector<std::string > inviteUser2;
         std::vector<Client> users;
         std::vector<Client> oper;
+
+        bool isUserInChannel(std::string& username);
+        bool isOperator(std::string& username);
+        bool isUserInvited( std::string& username);
     public:
 
 
@@ -45,7 +49,8 @@ class Channel
             void setMode(std::string &mode);
             void inviteUser(std::string userName);
             void setTopic(const std::string &topic);
-
+            // void joinChannel(Client& client);
+            
             std::string getTopic();
 
             void sendPublicMessage(int from_socket, const std::string &message);
