@@ -6,7 +6,7 @@
 /*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/26 23:27:59 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/27 00:02:43 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,22 +78,22 @@ public:
 
     // here a function to register the new client.
     // CMD
-    void            PASS(int socket, std::string pass);
-    void            NICK(int socket, std::string nickname);
-    void            USER(int socket, std::string user);
-    void            LIST(int socket, std::string list);
-    void            JOIN(int socket, std::string join);
-    void            PART(int socket, std::string part);
-    void            WHO(int socket, std::string who);
-    void            WHOIS(int socket, std::string whois);
-    void            PING(int socket, std::string ping);
-    void            PRIVMSG(int socket, std::string privmsg);
-    void            QUIT(int socket, std::string quit);
-    void            KICK(int socket, std::string kick);
-    void            INVITE(int socket, std::string invite);
-    void            TOPIC(int socket, std::string topic);
-    void            ISON(int socket, std::string ison);
-    void            MODE(int socket, std::string mode);
+    void            PASS(int socket, const std::string &pass);
+    void            NICK(int socket, const std::string &nickname);
+    void            USER(int socket, const std::string &user);
+    void            LIST(int socket, const std::string &list);
+    void            JOIN(int socket, const std::string &join);
+    void            PART(int socket, const std::string &part);
+    void            WHO(int socket, const std::string &who);
+    void            WHOIS(int socket, const std::string &whois);
+    void            PING(int socket, const std::string &ping);
+    void            PRIVMSG(int socket, const std::string &privmsg);
+    void            QUIT(int socket, const std::string &quit);
+    void            KICK(int socket, const std::string &kick);
+    void            INVITE(int socket, const std::string &invite);
+    void            TOPIC(int socket, const std::string &topic);
+    void            ISON(int socket, const std::string &ison);
+    void            MODE(int socket, const std::string &mode);
 
     // destructor:
     ~Server();
