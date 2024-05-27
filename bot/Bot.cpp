@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Bot.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 10:03:54 by codespace         #+#    #+#             */
-/*   Updated: 2024/05/22 22:36:19 by codespace        ###   ########.fr       */
+/*   Updated: 2024/05/25 18:58:55 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,16 @@
 #include <sys/socket.h>
 #include <cstring> 
 #include <arpa/inet.h>
-#define PORT 8080
+#include <netdb.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+  
+    #define PORT 3000
 
 Bot::Bot()
 {
+    // all of that should started here and get PORT as argument
 }
 
 Bot::~Bot()
@@ -38,13 +44,14 @@ Bot &Bot::operator=(const Bot &copy)
     return *this;
 }
 
-void Bot::stratSocket() // This function that starts the socket
+void Bot::stratSocket() // This function that starts the socket and connect with the server
 {
     int value = 1;
     int socketfd = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in addr;
+    struct addrinfo *hints, *res;
+    char buffer[1024];
     
-
     
     if (socketfd == -1)
     {
@@ -61,17 +68,45 @@ void Bot::stratSocket() // This function that starts the socket
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(PORT);
-    if (bind(socketfd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+    inet_pton(AF_INET, "localhost", &addr.sin_addr); // this function is used to convert the ip address from string to binary
+    if(connect(socketfd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
-        std::cerr << "Error: bind failed" << std::endl;
+        std::cerr << "Error: connect failed" << std::endl;
         exit(1);
     }
-    listen(socketfd, 3); // this function is used to listen to the socket (socketfd) and the second argument is the maximum number of connections that can be queued
-    
-    if(accept(socketfd, (struct sockaddr *)&addr, (socklen_t*)&addr) == -1)
+    char *msg = "JOIN #general\r\nJOIN #test\r\n";
+    send(socketfd, msg, strlen(msg), 0);
+    ssize_t status;
+    status = send(socketfd, "/This", 5, 0); // this function is used to send the message to the server (socketfd is the socket that is connected to the server, the second argument is the message that we want to send, the third argument is the size of the message and the last argument is the flag that is used to send the message)
+    std::cout << "status: " << status << std::endl;
+    // if(listen(socketfd, 5) == -1)
+    // {
+        // std::cerr << "Error: listen failed | " << strerror(errno)  << std::endl;
+        // exit(1);
+    // }
+    if(recv(socketfd, buffer, 5, 0) != -1)
     {
-        std::cerr << "Error: accept failed" << std::endl;
-        exit(1);  
-    } // this function is used to accept the connection from the client (socketfd is the socket that is listening to the connection and addr is the address of the client and the last argument is the size of the address of the client
+        std::cout << buffer << std::endl;
+        // std::cerr << "Error: recv failed" << std::endl;   
+     // this function is used to receive the message from the server (socketfd is the socket that is connected to the server, the second argument is the message that we want to receive, the third argument is the size of the message and the last argument is the flag that is used to receive the message)
+    }
+    // listen to incoming message from the server
     
+    close(socketfd); // this function is used to close the socket (socketfd is the socket that we want to close)
 }
+
+
+/*
+
+        if you
+           |
+          / \
+         /   \
+        /     \
+[don't try]  [try]
+      |        |
+     [✖️]      / \
+             /   \
+            [✔️]  [✖️]
+                
+*/
