@@ -3,24 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/22 15:43:06 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/27 23:07:54 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hpp"
+#include "../include/client.hpp"
 
-Client::Client(int _fd) : fd(_fd) {
-    std::cout << "Client created with fd: " << fd << std::endl;
+Client::Client(int _fd, std::string _ip, std::string _hostname)
+: fd(_fd), ip(_ip), hostname(_hostname), inboundBuffer(""), outboundBuffer(""), realname("unknown"), authenticated(false), registered(false) {
+    if (hostname.empty()) {
+        hostname = ip;
+    }
 }
 
 Client::~Client() {}
 
+bool    Client::outBoundReady() const {
+    return outboundBuffer.str().size(); // check if there's data in the buffer
+}
+
 std::vector<std::string> Client::splitMessage(const std::string& message) {
-    std::vector<std::string>    result;
-    std::istringstream stream(message);
+    std::vector<std::string>    result; 
+    std::istringstream stream(message); // create a stream from the message
     std::string                 token;
 
     // split the message by whitespace and store each part in the `result` vector.
@@ -52,7 +59,25 @@ void    Client::handleMessage(const std::string& message) {
     } else if (command == "PRIVMSG") {
         if (parts.size() > 2)
             handlePrivmsg(parts[1], message.substr(message.find(parts[2])));
-    } else {
+    } 
+    // else if (command == "KICK") {
+    //     if (parts.size() > 1)
+    //         handleKick(parts[1]);
+    // }
+    // else if(commaand == "TOPIC"){
+    //     if(parts.size() > 1)
+    //         handleTopic(parts[1]);
+    // }
+    // else if(command == " INVITE"){
+    //     if(parts.size() > 1)
+    //         handleInvite(parts[1]);
+    // }
+    // else if (command == "MODE") {
+    //     if (parts.size() > 1)
+    //         handleMode(parts[1]);
+    // }
+
+    else {
         std::cerr << "Uknowon command: " << command << std::endl;
     }
 }
@@ -75,4 +100,51 @@ void    Client::handleJoin(const std::string& channel) {
 void    Client::handlePrivmsg(const std::string& target, const std::string& message) {
     // print the private message to the target.
     std::cout << "Private messge to " << target << ": " << message << std::endl; 
+}
+
+std::string Client::getUserName() const {
+    return username;
+}
+
+int Client::getFd() const {
+    return fd;
+}
+
+bool    Client::isAuthenticated(void) const {
+    return authenticated;
+}
+
+void    Client::setAuthenticated(bool authenticat) {
+    authenticated = authenticat;
+}
+
+void    Client::newMessage(const std::string &message) {
+    messageQueue.push_back(message);
+}
+
+void    Client::appendToInboundBuffer(std::string data) { // data is comming from a client
+    inboundBuffer << data;
+}
+
+bool    Client::inboundReady() const {
+    return inboundBuffer.str().find("\r\n") != std::string::npos;
+}
+
+bool    Client::isRegistered() const {
+    return registered;
+}
+
+std::vector<std::string> Client::splitCommands() {
+    std::vector<std::string>    result;
+    std::string                 line = inboundBuffer.str();  // read a line from the buffer
+    size_t                      pos = line.find("\r\n"); // find the end of the line
+    while (pos != std::string::npos) {
+        std::string command = line.substr(0, pos); // extract the command
+        if (command.size() > 0) {
+            result.push_back(command);
+        }
+        line = line.substr(pos + 2); // remove the command from the buffer
+    }
+    inboundBuffer.str(line); // update the buffer
+    return result;
 }

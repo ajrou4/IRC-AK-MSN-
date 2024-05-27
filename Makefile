@@ -6,15 +6,15 @@
 #    By: omakran <omakran@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/18 18:37:28 by omakran           #+#    #+#              #
-#    Updated: 2024/05/22 23:19:35 by omakran          ###   ########.fr        #
+#    Updated: 2024/05/25 19:40:42 by omakran          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
-SRC = src/main.cpp src/ircserver.cpp src/client.cpp
+SRC = src/main.cpp src/ircserver.cpp src/client.cpp src/ircImplementation.cpp 
 
-# SRC = src/main.cpp src/ircserver.cpp $(wildcard src/*.cpp)
+# SRC = src/main.cpp src/ircserver.cpp #$(wildcard src/*.cpp)
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
