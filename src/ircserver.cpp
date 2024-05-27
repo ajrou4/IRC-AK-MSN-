@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/25 19:35:54 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/26 00:49:12 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,25 @@ Client& Server::getClient(int fd) {
         throw std::runtime_error("Client not found");
     }
     return it->second;
+}
+
+void    Server::sendMessageToClient(int client_fd, const std::string& message) {
+    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
+    client.newMessage(message); // add the message to the client message queue
+    std::cout << ">>>>> Sending into socket " << client_fd << ": " << message << std::endl;
+
+    // mark the client_fd as ready for wrinting
+    struct pollfd &client_pollfd = getPollfd(client_fd);
+    client_pollfd.events |= POLLOUT;
+}
+
+struct pollfd& Server::getPollfd(int fd) {
+    for (size_t i = 0; i < fds.size(); ++i) {
+        if (fds[i].fd == fd) {
+            return fds[i];
+        }
+    }
+    throw std::runtime_error("Pollfd not found for fd: " + std::to_string(fd));
 }
 
 void    Server::cleanUp() {
