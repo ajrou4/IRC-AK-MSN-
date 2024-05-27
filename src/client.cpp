@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/26 00:45:56 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/27 23:32:24 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,22 +53,8 @@ void    Client::handleMessage(const std::string& message) {
         if (parts.size() > 2)
             handlePrivmsg(parts[1], message.substr(message.find(parts[2])));
     } 
-    // else if (command == "KICK") {
-    //     if (parts.size() > 1)
-    //         handleKick(parts[1]);
-    // }
-    // else if(commaand == "TOPIC"){
-    //     if(parts.size() > 1)
-    //         handleTopic(parts[1]);
-    // }
-    // else if(command == " INVITE"){
-    //     if(parts.size() > 1)
-    //         handleInvite(parts[1]);
-    // }
-    // else if (command == "MODE") {
-    //     if (parts.size() > 1)
-    //         handleMode(parts[1]);
-    // }
+
+
 
     else {
         std::cerr << "Uknowon command: " << command << std::endl;
@@ -113,4 +99,13 @@ void    Client::setAuthenticated(bool authenticated) {
 
 void    Client::newMessage(const std::string &message) {
     messageQueue.push_back(message);
+}
+std::string Client::getNick() const {
+    return nickname;
+}
+void Client::setRealName(const std::string& realName){
+    this->realname = realName;
+}
+std::string Client::getRealName() const{
+    return this->realname;
 }
