@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/22 15:41:49 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/26 00:46:54 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ class Client {
     std::string                 nickname;
     std::string                 username;
     std::vector<std::string>    channels;
+    bool                        authenticated;
+    std::vector<std::string>    messageQueue;
 
     void                        handleNick(const std::string& nick);
     void                        handleUser(const std::string& user);
@@ -42,14 +44,18 @@ public:
     Client(int fd);
     ~Client();
     std::string                 getUserName() const; // return the client's username.
-    int                        getFd() const; // return the client's file descriptor.
+    int                         getFd() const; // return the client's file descriptor.
     /* ########################################################
        ---------------- member functions: ---------------------
        ######################################################## */
 
-    //                      internal message processing
-    void                    handleMessage(const std::string& message);
-    
+    //                          internal message processing
+    void                        handleMessage(const std::string& message);
+
+    bool                        isAuthenticated(void) const;
+
+    void                        setAuthenticated(bool authenticated = true);
+    void                        newMessage(const std::string &message);
 };
 
 #endif

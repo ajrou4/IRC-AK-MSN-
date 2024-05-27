@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/23 13:46:01 by codespace        ###   ########.fr       */
+/*   Updated: 2024/05/26 00:45:56 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/client.hpp"
 
-Client::Client(int _fd) : fd(_fd) {
+Client::Client(int _fd) : fd(_fd), authenticated(false) {
     std::cout << "Client created with fd: " << fd << std::endl;
 }
 
@@ -94,9 +94,23 @@ void    Client::handlePrivmsg(const std::string& target, const std::string& mess
     // print the private message to the target.
     std::cout << "Private messge to " << target << ": " << message << std::endl; 
 }
+
 std::string Client::getUserName() const {
     return username;
 }
+
 int Client::getFd() const {
     return fd;
+}
+
+bool    Client::isAuthenticated(void) const {
+    return authenticated;
+}
+
+void    Client::setAuthenticated(bool authenticated) {
+    authenticated = authenticated;
+}
+
+void    Client::newMessage(const std::string &message) {
+    messageQueue.push_back(message);
 }
