@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/27 15:21:15 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:53:34 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Server {
     //                                      map to manage the clients
     std::map<int, Client>                   clients;
     //                                      map of channel names to list of client file descriptors.
-    std::map<std::string, std::vector<int> > channels;
+    std::map<std::string,Channel> channels;
     //                                      map to store the command
     typedef void    (Server::*commandHandler)(int, std::string);
     std::map<std::string, commandHandler>   commands;
@@ -71,12 +71,12 @@ public:
 
     //              main loop for polling and handling events.
     void            pollLoop();
-
     Client&         getClient(int fd);
     void            sendMessageToClient(int client_fd, const std::string &message);
     struct pollfd&  getPollfd(int fd);
 
     // here a function to register the new client.
+    Client* getClientByNick(const std::string& nick);
     // CMD
     void            PASS(int socket, const std::string &pass);
     void            NICK(int socket, const std::string &nickname);

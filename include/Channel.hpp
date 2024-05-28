@@ -6,7 +6,7 @@
 /*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/26 10:50:48 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/28 00:48:07 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #include <netdb.h>
 #include <cstring>
 #include "client.hpp"
+
 
 class Channel
 {
@@ -57,13 +58,18 @@ class Channel
 
             void addUser(Client& client);
             void addOperator(Client& client);
+            void removeUser(Client& client);
+            
             void kickUser(const std::string &userName);
             void setMode(std::string &mode);
             void inviteUser(std::string userName);
             void setTopic(const std::string &topic);
             // void joinChannel(Client& client);
-            
-            std::string getTopic();
+            std::string  const &getName()const;
+            const std::vector<Client>  &getUsers()const;
+            const std::string &getMode()const;
+            bool hasUser(Client &client);
+            const std::string  &getTopic() const;
 
             void sendPublicMessage(int from_socket, const std::string &message);
             void sendPrivateMessage(int from_socket, int to_socket, const std::string &message);

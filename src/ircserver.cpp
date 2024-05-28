@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/26 00:49:12 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/28 00:54:27 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,24 @@ Server::~Server() {
 }
 
 // initiale the command
-void    Server::InithandleComands(void) {
-    commands["PASS"] = &Server::PASS;
-    commands["NICK"] = &Server::NICK;
-    commands["USER"] = &Server::USER;
-    commands["LIST"] = &Server::LIST;
-    commands["JOIN"] = &Server::JOIN;
-    commands["PART"] = &Server::PART;
-    commands["WHO"] = &Server::WHO;
-    commands["WHOIS"] = &Server::WHOIS;
-    commands["PING"] = &Server::PING;
-    commands["PRIVMSG"] = &Server::PRIVMSG;
-    commands["QUIT"] = &Server::QUIT;
-    commands["KICK"] = &Server::KICK;
-    commands["INVITE"] = &Server::INVITE;
-    commands["TOPIC "] = &Server::TOPIC;
-    commands["ISON"] = &Server::ISON;
-    commands["MODE"] = &Server::MODE;
-}
+// void    Server::InithandleComands(void) {
+//     commands["PASS"] = &Server::PASS;
+//     commands["NICK"] = &Server::NICK;
+//     commands["USER"] = &Server::USER;
+//     commands["LIST"] = &Server::LIST;
+//     commands["JOIN"] = &Server::JOIN;
+//     commands["PART"] = &Server::PART;
+//     commands["WHO"] = &Server::WHO;
+//     commands["WHOIS"] = &Server::WHOIS;          /// hda b9i fih erreur;
+//     commands["PING"] = &Server::PING;
+//     commands["PRIVMSG"] = &Server::PRIVMSG;
+//     commands["QUIT"] = &Server::QUIT;
+//     commands["KICK"] = &Server::KICK;
+//     commands["INVITE"] = &Server::INVITE;
+//     commands["TOPIC "] = &Server::TOPIC;
+//     commands["ISON"] = &Server::ISON;
+//     commands["MODE"] = &Server::MODE;
+// }
 
 void    Server::initializeServer() {
     struct sockaddr_in  server_addr;
@@ -183,7 +183,7 @@ void    Server::handleClientMessage(int client_fd) {
 // boardcast a message to all clients in a channel
 void    Server::broadcastMessage(const std::string& message, const std::string& channel) {
     if (channels.find(channel) != channels.end()) {
-        for (size_t i = 0; i < channels[channel].size(); i++)
+        for (size_t i = 0; i < channels[channel].size; i++)
         {
             int client_fd = channels[channel][i];
             send(client_fd, message.c_str(), message.size(), 0);
@@ -229,4 +229,13 @@ void    Server::cleanUp() {
     }
     fds.clear();
     clients.clear();
+}
+
+Client* Server::getClientByNick(const std::string& nick) {
+    for (std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); ++it) {
+        if (it->second.getNick() == nick) {
+            return &(it->second);
+        }
+    }
+    return NULL;
 }

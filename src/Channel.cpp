@@ -6,7 +6,7 @@
 /*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/26 10:51:05 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/28 00:48:15 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ void Channel::inviteUser(std::string userName){
 void Channel::setTopic(const std::string &topic){
     this->topic = topic;
 }
-std::string Channel::getTopic(){
-    std::cout << "Topic: "<<this->topic<<std::endl;
+const std::string &Channel::getTopic()const{
+    return this->topic;
 }
 
 void Channel::sendPublicMessage(int from_socket, const std::string &message){
@@ -148,4 +148,35 @@ bool Channel::isUserInvited( std::string &username){
             return true;
         it++;
     }
+}
+std::string const &Channel::getName()const{
+    return this->name;
+}
+std::vector<Client> const &Channel::getUsers()const{
+    return this->users;
+}
+void Channel::removeUser(Client &client){
+    std::vector<Client>::iterator it = users.begin();
+    while(it!= users.end())
+    {
+        if(it->getUserName() == client.getUserName())
+        {
+            users.erase(it);
+            break;
+        }
+        it++;
+    }
+}
+const std::string &Channel::getMode()const{
+    return this->key;
+}
+bool Channel::hasUser(Client &client){
+    std::vector<Client>::iterator it = users.begin();
+    while(it != users.end())
+    {
+        if(it->getUserName() == client.getUserName())
+            return true;
+        it++;
+    }
+    return false;
 }
