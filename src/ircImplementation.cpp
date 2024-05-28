@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 12:53:00 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/28 21:49:09 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 /* ------------ this file will implement the logic of ARC --------------
 |                        let's parss each command                       |
  --------------------------------------------------------------------- */ 
-
 
 void Server::sendCommand(int socket, const std::string& command){
         std::string comNewLine = command + "\r\n";
@@ -76,7 +75,7 @@ void Server::JOIN(int socket, const std::string& channelName) {
 
     channels[channelName].addUser(client);
     std::string joinMessage = ":" + client.getNick() + "!" + client.getUserName() + "@irc.example.com JOIN :" + channelName;
-    broadcastMessage(joinMessage, channelName);
+    //broadcastMessage(joinMessage, channelName);
     sendCommand(socket, joinMessage);
 }
 void Server::LIST(int socket, const std::string &list) {
@@ -159,7 +158,7 @@ void Server::PRIVMSG(int socket, const std::string &privmsg) {
             Channel& channel = it->second;
             std::vector<Client> users = channel.getUsers();
             for (std::vector<Client>::iterator It = users.begin(); It != users.end(); ++It) {
-                Client user = *It;
+                Client &user = *It;
                 if (user.getFd() != socket) {
                     sendCommand(user.getFd(), ":" + client.getNick() + " PRIVMSG " + target + " :" + message);
                 }

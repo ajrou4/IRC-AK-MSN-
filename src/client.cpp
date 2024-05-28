@@ -3,24 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/27 23:32:24 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/28 18:07:09 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/client.hpp"
 
-Client::Client(int _fd) : fd(_fd), authenticated(false) {
-    std::cout << "Client created with fd: " << fd << std::endl;
+Client::Client(int _fd, std::string _ip, std::string _hostname)
+: fd(_fd), ip(_ip), hostname(_hostname), inboundBuffer(""), outboundBuffer(""), realname("unknown"), authenticated(false), registered(false) {
+    if (hostname.empty()) {
+        hostname = ip;
+    }
 }
 
 Client::~Client() {}
 
+bool    Client::outBoundReady() const {
+    return outboundBuffer.str().size(); // check if there's data in the buffer
+}
+
 std::vector<std::string> Client::splitMessage(const std::string& message) {
-    std::vector<std::string>    result;
-    std::istringstream stream(message);
+    std::vector<std::string>    result; 
+    std::istringstream stream(message); // create a stream from the message
     std::string                 token;
 
     // split the message by whitespace and store each part in the `result` vector.
@@ -53,9 +60,6 @@ void    Client::handleMessage(const std::string& message) {
         if (parts.size() > 2)
             handlePrivmsg(parts[1], message.substr(message.find(parts[2])));
     } 
-
-
-
     else {
         std::cerr << "Uknowon command: " << command << std::endl;
     }
@@ -93,19 +97,37 @@ bool    Client::isAuthenticated(void) const {
     return authenticated;
 }
 
-void    Client::setAuthenticated(bool authenticated) {
-    authenticated = authenticated;
+void    Client::setAuthenticated(bool authenticat) {
+    authenticated = authenticat;
 }
 
 void    Client::newMessage(const std::string &message) {
     messageQueue.push_back(message);
 }
-std::string Client::getNick() const {
-    return nickname;
+
+void    Client::appendToInboundBuffer(std::string data) { // data is comming from a client
+    inboundBuffer << data;
 }
-void Client::setRealName(const std::string& realName){
-    this->realname = realName;
+
+bool    Client::inboundReady() const {
+    return inboundBuffer.str().find("\r\n") != std::string::npos;
 }
-std::string Client::getRealName() const{
-    return this->realname;
+
+bool    Client::isRegistered() const {
+    return registered;
+}
+
+std::vector<std::string> Client::splitCommands() {
+    std::vector<std::string>    result;
+    std::string                 line = inboundBuffer.str();  // read a line from the buffer
+    size_t                      pos = line.find("\r\n"); // find the end of the line
+    while (pos != std::string::npos) {
+        std::string command = line.substr(0, pos); // extract the command
+        if (command.size() > 0) {
+            result.push_back(command);
+        }
+        line = line.substr(pos + 2); // remove the command from the buffer
+    }
+    inboundBuffer.str(line); // update the buffer
+    return result;
 }
