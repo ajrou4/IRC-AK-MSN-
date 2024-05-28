@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 18:16:21 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/28 18:20:04 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,8 +266,8 @@ void    Server::cleanUp() {
 
 Client* Server::getClientByNick(const std::string& nick) {
     for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it) {
-        if (it->second.getNick() == nick) {
-            return &(it->second);
+        if (it->second->getNick() == nick) {
+            return (it->second);
         }
     }
     return NULL;
