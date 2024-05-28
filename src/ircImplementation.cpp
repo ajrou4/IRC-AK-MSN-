@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 00:53:16 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/28 18:10:56 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ircserver.hpp"
 #include "client.hpp"
-
 
 
 void Server::sendCommand(int socket, const std::string& command){
@@ -73,7 +72,7 @@ void Server::JOIN(int socket, const std::string& channelName) {
 
     channels[channelName].addUser(client);
     std::string joinMessage = ":" + client.getNick() + "!" + client.getUserName() + "@irc.example.com JOIN :" + channelName;
-    broadcastMessage(joinMessage, channelName);
+    //broadcastMessage(joinMessage, channelName);
     sendCommand(socket, joinMessage);
 }
 void Server::LIST(int socket, const std::string &list) {

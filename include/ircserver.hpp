@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 00:27:39 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/28 17:56:54 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
 # include <arpa/inet.h> // for inet_ntoa
 # include <string>
 
-
 # include "client.hpp"
+# include "Channel.hpp"
 
 class Server {
     //                                      port number for the server
@@ -40,25 +40,25 @@ class Server {
     //                                      is passed to the poll function, which will monitor all the file descriptors listed in it.
     std::vector<struct pollfd>              fds;
     //                                      map to manage the clients
-    std::map<int, Client>                   clients;
-    //                                      map of channel names to list of client file descriptors.
-    std::map<std::string,Channel> channels;
+    std::map<int, Client*>                  clients;
+    //                                      map of channel names
+    std::map<std::string, Channel>          channels;
     //                                      map to store the command
     typedef void    (Server::*commandHandler)(int, std::string);
     std::map<std::string, commandHandler>   commands;
 
-    // ------------------- member functions: ----------------------- 
-    // 1-           initialize the serever socket.
+    // ------------------- member functions: -----------------------
+
+    //              initialize the serever socket.
     void            initializeServer();
-    // 2-           handles events returned by poll().
+    //              handles events returned by poll().
     void            handleEvents();
-    // 3-           accept a new client connection.
+    //              accept a new client connection.
     void            handleNewConnection();
-    // 4-           handle a message from client
+    //              handle a message from client
     void            handleClientMessage(int client_fd);
-    // 5-           broadcasts a message to all clients in a channel.
-    void            broadcastMessage(const std::string& message, const std::string& channel);
-        
+    //              write message to a client
+    void            WriteMsgToClient(int socket);
     //              additional helper functions as needed (oziyada mn ras lhmq hh).
     void            InithandleComands(void);
         
@@ -71,9 +71,12 @@ public:
 
     //              main loop for polling and handling events.
     void            pollLoop();
-    Client&         getClient(int fd);
-    void            sendMessageToClient(int client_fd, const std::string &message);
+
     struct pollfd&  getPollfd(int fd);
+    Client&         getClient(int fd); // return the client object associated with the file descriptor.
+    Client&         getClient(const std::string& nickname); // return the client object associated with the nickname.
+    void            sendMessageToClient(int client_fd, const std::string &message);
+    void            commandsProssed(std::vector<std::string> cmds, int fd_client);
 
     // here a function to register the new client.
     Client* getClientByNick(const std::string& nick);
