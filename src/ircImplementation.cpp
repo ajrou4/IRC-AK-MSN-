@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 18:10:56 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/28 18:13:10 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ void Server::PRIVMSG(int socket, const std::string &privmsg) {
             Channel& channel = it->second;
             std::vector<Client> users = channel.getUsers();
             for (std::vector<Client>::iterator It = users.begin(); It != users.end(); ++It) {
-                Client user = *It;
+                Client &user = *It;
                 if (user.getFd() != socket) {
                     sendCommand(user.getFd(), ":" + client.getNick() + " PRIVMSG " + target + " :" + message);
                 }
