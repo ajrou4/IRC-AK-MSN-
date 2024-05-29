@@ -3,16 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 02:33:04 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 11:38:48 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ircserver.hpp"
 #include "client.hpp"
 
+/* ------------ this file will implement the logic of ARC --------------
+|                        let's parss each command                       |
+ --------------------------------------------------------------------- */ 
 
 // numeric replies: https://modern.ircdocs.horse/#rplwelcome-001
 void    Server::registerNewClient(int socket) {
@@ -82,6 +85,8 @@ void    Server::USER(int socket, std::string params) {
 }
 
 void    Server::JOIN(int socket, std::string channelName) {
+    static_cast<void>(socket);
+    static_cast<void>(channelName);
     // Client& client = getClient(socket);
     // if (!client.isAuthenticated()) {
     //     sendMessageCommand(socket, ":irc.example.com 451 * :You have not registered");
@@ -99,6 +104,8 @@ void    Server::JOIN(int socket, std::string channelName) {
 }
 
 void    Server::LIST(int socket, std::string list) {
+    static_cast<void>(socket);
+    static_cast<void>(list);
     // sendMessageCommand(socket, ":server.name 321 Channel :Users Name");
     // for (std::map<std::string, Channel>::iterator it = channels.begin(); it != channels.end(); ++it) {
     //     const Channel& channel = it->second;
@@ -108,6 +115,8 @@ void    Server::LIST(int socket, std::string list) {
 }
 
 void    Server::PART(int socket, std::string part) {
+    static_cast<void>(socket);
+    static_cast<void>(part);
     // Client& client = getClient(socket);
     // std::string channelName = part.substr(part.find(' ') + 1);
     
@@ -122,6 +131,8 @@ void    Server::PART(int socket, std::string part) {
 }
 
 void    Server::WHO(int socket, std::string who) {
+    static_cast<void>(socket);
+    static_cast<void>(who);
     // Client& client = getClient(socket);
     // std::string channelName = who.substr(who.find(' ') + 1);
     
@@ -140,6 +151,8 @@ void    Server::WHO(int socket, std::string who) {
 }
 
 void    Server::WHOIS(int socket, std::string whois) {
+    static_cast<void>(socket);
+    static_cast<void>(whois);
     // Client& client = getClient(socket);
     // std::string nick = whois.substr(whois.find(' ') + 1);
     
@@ -159,6 +172,8 @@ void    Server::PING(int socket, std::string ping) {
 }
 
 void    Server::PRIVMSG(int socket, std::string privmsg) {
+    static_cast<void>(socket);
+    static_cast<void>(privmsg);
     // Client& client = getClient(socket);
     // size_t pos = privmsg.find(' ');
     // std::string target = privmsg.substr(0, pos);
@@ -190,26 +205,9 @@ void    Server::PRIVMSG(int socket, std::string privmsg) {
     // }
 }
 
-void    Server::MODE(int socket, std::string mode) {
-    // Client& client = getClient(socket);
-    // std::istringstream iss(mode);
-    // std::string channelName, modeString;
-    // iss >> channelName >> modeString;
-    
-    // std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    // if (it != channels.end()) {
-    //     Channel& channel = it->second;
-    //     if (modeString.empty()) {
-    //         sendMessageCommand(socket, ":server.name 324 " + client.getNick() + " " + channelName + " +" + channel.getMode());
-    //     } else {
-    //         sendMessageCommand(socket, ":server.name 472 " + client.getNick() + " " + channelName + " :is unknown mode char to me");
-    //     }
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + channelName + " :No such channel");
-    // }
-}
-
 void    Server::QUIT(int socket, std::string quit) {
+    static_cast<void>(socket);
+    static_cast<void>(quit);
     // Client& client = getClient(socket);
     // std::string message = quit.substr(quit.find(' ') + 1);
     
@@ -224,6 +222,8 @@ void    Server::QUIT(int socket, std::string quit) {
 
 
 void    Server::KICK(int socket, std::string kick) {
+    static_cast<void>(socket);
+    static_cast<void>(kick);
     // Client& client = getClient(socket);
     // std::istringstream iss(kick);
     // std::string channelName, nick, comment;
@@ -247,6 +247,8 @@ void    Server::KICK(int socket, std::string kick) {
 
 
 void    Server::INVITE(int socket, std::string invite) {
+    static_cast<void>(socket);
+    static_cast<void>(invite);
     // Client& client = getClient(socket);
     // std::istringstream iss(invite);
     // std::string nick, channelName;
@@ -264,6 +266,8 @@ void    Server::INVITE(int socket, std::string invite) {
 
 
 void    Server::TOPIC(int socket, std::string topic) {
+    static_cast<void>(socket);
+    static_cast<void>(topic);
     // Client& client = getClient(socket);
     // std::istringstream iss(topic);
     // std::string channelName, newTopic;
@@ -281,6 +285,8 @@ void    Server::TOPIC(int socket, std::string topic) {
 
 
 void    Server::ISON(int socket, std::string ison) {
+    static_cast<void>(socket);
+    static_cast<void>(ison);
     // Client& client = getClient(socket);
     // std::istringstream iss(ison);
     // std::string nicks;
@@ -301,6 +307,8 @@ void    Server::ISON(int socket, std::string ison) {
 }
 
 void    Server::MODE(int socket, std::string mode){
+    static_cast<void>(socket);
+    static_cast<void>(mode);
     // Client& client = getClient(socket);
     // std::istringstream iss(mode);
     // std::string channelName, modeString;

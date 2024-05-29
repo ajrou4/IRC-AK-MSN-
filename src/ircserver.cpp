@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 02:18:59 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 16:02:39 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,15 +181,6 @@ Client& Server::getClient(int fd) {
     return *it->second; // return the client object.
 }
 
-void    Server::sendMessageToClient(int client_fd, const std::string& message) {
-    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
-    client.newMessage(message); // add the message to the client message queue
-    std::cout << ">>>>> Sending into socket " << client_fd << ": " << message << std::endl;
-
-    struct pollfd &client_pollfd = getPollfd(client_fd);
-    client_pollfd.events |= POLLOUT; // mark the client_fd as ready for wrinting
-}
-
 struct pollfd& Server::getPollfd(int fd) {
     // find the pollfd object associated with the file descriptor.
     for (size_t i = 0; i < fds.size(); ++i) {
@@ -238,7 +229,7 @@ void    Server::sendMessageToClient(int client_fd, const std::string& message) {
 }
 
 void    Server::sendMessageToClientChannels(int client_fd, const std::string &message) {
-    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
+    //Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
     std::vector<Channel*> channels = getChannels(client_fd); // get the channels the client is in
     for (size_t i = 0; i < channels.size(); i++) {
         channels[i]->broadcastMessage(message, client_fd); // broadcast the message to the channel
@@ -246,7 +237,7 @@ void    Server::sendMessageToClientChannels(int client_fd, const std::string &me
 }
 
 std::vector<Channel*>   Server::getChannels(int client_fd) {
-    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
+   // Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
     std::vector<Channel*> result;
     std::map<std::string, Channel*>::iterator it = channels.begin();
     for (; it != channels.end(); it++) {
