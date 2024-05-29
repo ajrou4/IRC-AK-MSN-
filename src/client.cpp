@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 11:25:00 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/29 17:13:29 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,4 +142,16 @@ std::vector<std::string> Client::splitCommands() {
     }
     inboundBuffer.str(line); // update the buffer
     return result;
+}
+
+void    Client::setRealName(std::string realName) {
+    this->realname = realName;
+}
+
+void    Client::setUserName(std::string userName) {
+    this->username = userName;
+}
+
+std::string Client::getNick() const {
+    return nickname;
 }
