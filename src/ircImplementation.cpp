@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 11:38:48 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/29 17:23:56 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,30 @@ void    Server::NICK(int socket, std::string nickname) {
 
 void    Server::USER(int socket, std::string params) {
     Client& client = getClient(socket);
+    std::string username, realname, skipChar;
     std::istringstream iss(params);
-    std::string username, hostname, servername, realname;
-    iss >> username >> hostname >> servername;
-    realname = params.substr(params.find(':') + 1);
-
-    client.handleUser(username);
+    iss >> username >> std::ws; // get the username and get rid of the leading whitespace
+    std::getline(iss, skipChar, ':'); // get rid of the colon
+    iss >> std::ws; // get rid of the leading whitespace
+    std::getline(iss, realname, '\0');
+    //                                          https://modern.ircdocs.horse/#userlen-parameter
+    if (username.size() < 1 || username.size() > 12
+        || username.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != std::string::npos
+        || username.find_first_of("0123456789", 0, 1) == 0) {
+        sendMessageCommand(socket, ":irc 432 " + username + " :Erroneous username");
+        return;
+    }
+    if (!realname.empty() && (realname.size() > 50 || realname.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]{}\\|^`_- ") != std::string::npos)) {
+        sendMessageCommand(socket, ":irc 501 " + realname + " : Invalid Realname");
+        return;
+    }
+    std::stringstream broadcastMessage;
+    broadcastMessage << ":" << client.getNick() << " !" << username << "@" + client.getHostname() << " USER " << params; // broadcast the new username
+    client.setUserName(username);
     client.setRealName(realname);
-    sendMessageCommand(socket, ":irc.example.com 001 " + username + " :User registered");
+    if (client.getNick() != "" && !client.isRegistered()) // if the client is not registered, register them
+        registerNewClient(socket);
+    sendMessageToClientChannels(socket, broadcastMessage.str()); // send the message to all the channels the client is in
 }
 
 void    Server::JOIN(int socket, std::string channelName) {

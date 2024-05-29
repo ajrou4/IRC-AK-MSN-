@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 01:51:28 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 17:10:17 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ public:
     int                         getFd() const; // return the client's file descriptor.
     std::string                 getRealName() const;
     std::string                 getHostname() const;
-    void                        setRealName(const std::string& realName);
+    void                        setRealName(std::string realName);
+    void                        setUserName(std::string userName);
     void                        setNick(const std::string& nick);
     void                        setRegistered(bool registered = true);
 
