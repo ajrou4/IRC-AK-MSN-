@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 18:20:04 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 02:18:59 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();
+    InithandleComands();
 }
 
 Server::~Server() {
@@ -22,22 +23,22 @@ Server::~Server() {
 
 // initiale the command
 void    Server::InithandleComands(void) {
-    // commands["PASS"] = &Server::PASS;
-    // commands["NICK"] = &Server::NICK;
-    // commands["USER"] = &Server::USER;
-    // commands["LIST"] = &Server::LIST;
-    // commands["JOIN"] = &Server::JOIN;
-    // commands["PART"] = &Server::PART;
-    // commands["WHO"] = &Server::WHO;
-    // commands["WHOIS"] = &Server::WHOIS;
-    // commands["PING"] = &Server::PING;
-    // commands["PRIVMSG"] = &Server::PRIVMSG;
-    // commands["QUIT"] = &Server::QUIT;
-    // commands["KICK"] = &Server::KICK;
-    // commands["INVITE"] = &Server::INVITE;
-    // commands["TOPIC "] = &Server::TOPIC;
-    // commands["ISON"] = &Server::ISON;
-    // commands["MODE"] = &Server::MODE;
+    commands["PASS"] = &Server::PASS;
+    commands["NICK"] = &Server::NICK;
+    commands["USER"] = &Server::USER;
+    commands["LIST"] = &Server::LIST;
+    commands["JOIN"] = &Server::JOIN;
+    commands["PART"] = &Server::PART;
+    commands["WHO"] = &Server::WHO;
+    commands["WHOIS"] = &Server::WHOIS;
+    commands["PING"] = &Server::PING;
+    commands["PRIVMSG"] = &Server::PRIVMSG;
+    commands["QUIT"] = &Server::QUIT;
+    commands["KICK"] = &Server::KICK;
+    commands["INVITE"] = &Server::INVITE;
+    commands["TOPIC "] = &Server::TOPIC;
+    commands["ISON"] = &Server::ISON;
+    commands["MODE"] = &Server::MODE;
 }
 
 void    Server::initializeServer() {
@@ -91,7 +92,7 @@ void    Server::initializeServer() {
 // main loop of the server:
 void    Server::pollLoop() {
     while (true) {
-        int poll_count = poll(fds.data(), fds.size(), -1);
+        int poll_count = poll(fds.data(), fds.size(), -1); // wait indefinitely for events
         if (poll_count < 0) {
             std::cerr << "Poll error: " << strerror(errno) << std::endl;
             exit(EXIT_FAILURE);
@@ -107,11 +108,11 @@ void    Server::handleEvents() {
     // iterate over all monitored file descriptors.
     for (size_t i = 1; i < fds.size(); i++)
     {
-        if (fds[i].revents & (POLLERR | POLLHUP))
+        if (fds[i].revents & (POLLERR | POLLHUP)) // if there's an error or the client disconnected
             QUIT(fds[i].fd, "Client disconnected");
-        else if (fds[i].revents | POLLIN)
+        else if (fds[i].revents | POLLIN) // if there's data to read
             handleClientMessage(fds[i].fd);
-        else if (fds[i].revents | POLLOUT)
+        else if (fds[i].revents | POLLOUT)  // if there's data to write
             WriteMsgToClient(fds[i].fd);
     }
 }
@@ -146,10 +147,10 @@ void    Server::handleNewConnection() {
     // add the new client to the list of file descriptors to poll
     struct pollfd       client_pollfd;
     client_pollfd.fd = client_fd; // client file descriptor.
-    client_pollfd.events = POLLIN | POLLERR | POLLHUP; // interested in reading events
+    client_pollfd.events = POLLIN | POLLERR | POLLHUP; // events to monitor.
     fds.push_back(client_pollfd); // add to the list of poll file descriptors.
-    std::string clientIp = inet_ntoa(client_addr.sin_addr);
-    clients[client_fd] = new Client(client_fd, clientIp, clientIp);
+    std::string clientIp = inet_ntoa(client_addr.sin_addr); // client IP address.
+    clients[client_fd] = new Client(client_fd, clientIp, clientIp); // create a new client object.
 
     std::cout << "New connection from " << clientIp << std::endl;
 
@@ -165,28 +166,19 @@ void    Server::handleClientMessage(int client_fd) {
         return;
     }
     Client& client = getClient(client_fd);
-    client.appendToInboundBuffer(std::string(buffer, bytes_read));
+    client.appendToInboundBuffer(std::string(buffer, bytes_read)); // append the data to the client's inbound buffer.
     if (client.inboundReady()) {
         std::vector<std::string> commands = client.splitCommands();
-        commandsProssed(commands, client_fd);
+        commandsProcess(commands, client_fd); // process the commands.
     }
 }
 
 Client& Server::getClient(int fd) {
-    std::map<int, Client*>::iterator it = clients.find(fd);
+    std::map<int, Client*>::iterator it = clients.find(fd); // find the client object associated with the file descriptor.
     if (it == clients.end()) {
         throw std::runtime_error("Client not found for fd: " + std::to_string(fd));
     }
-    return *it->second;
-}
-
-Client& Server::getClient(const std::string& nickname) {
-    for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it) {
-        if (it->second->getUserName() == nickname) {
-            return *it->second;
-        }
-    }
-    throw std::runtime_error("Client not found for nickname: " + nickname);
+    return *it->second; // return the client object.
 }
 
 void    Server::sendMessageToClient(int client_fd, const std::string& message) {
@@ -194,12 +186,12 @@ void    Server::sendMessageToClient(int client_fd, const std::string& message) {
     client.newMessage(message); // add the message to the client message queue
     std::cout << ">>>>> Sending into socket " << client_fd << ": " << message << std::endl;
 
-    // mark the client_fd as ready for wrinting
     struct pollfd &client_pollfd = getPollfd(client_fd);
-    client_pollfd.events |= POLLOUT;
+    client_pollfd.events |= POLLOUT; // mark the client_fd as ready for wrinting
 }
 
 struct pollfd& Server::getPollfd(int fd) {
+    // find the pollfd object associated with the file descriptor.
     for (size_t i = 0; i < fds.size(); ++i) {
         if (fds[i].fd == fd) {
             return fds[i];
@@ -208,7 +200,7 @@ struct pollfd& Server::getPollfd(int fd) {
     throw std::runtime_error("Pollfd not found for fd: " + std::to_string(fd));
 }
 
-void    Server::commandsProssed(std::vector<std::string> cmds, int fd_client) {
+void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     std::vector<std::string>::iterator it = cmds.begin();
     Client& client = getClient(fd_client);
     while (it != cmds.end()) {
@@ -245,13 +237,35 @@ void    Server::sendMessageToClient(int client_fd, const std::string& message) {
     client_pollfd.events |= POLLOUT;
 }
 
-struct pollfd& Server::getPollfd(int fd) {
-    for (size_t i = 0; i < fds.size(); ++i) {
-        if (fds[i].fd == fd) {
-            return fds[i];
+void    Server::sendMessageToClientChannels(int client_fd, const std::string &message) {
+    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
+    std::vector<Channel*> channels = getChannels(client_fd); // get the channels the client is in
+    for (size_t i = 0; i < channels.size(); i++) {
+        channels[i]->broadcastMessage(message, client_fd); // broadcast the message to the channel
+    }
+}
+
+std::vector<Channel*>   Server::getChannels(int client_fd) {
+    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
+    std::vector<Channel*> result;
+    std::map<std::string, Channel*>::iterator it = channels.begin();
+    for (; it != channels.end(); it++) {
+        if (it->second->hasClient(client_fd)) {
+            result.push_back(it->second);
         }
     }
-    throw std::runtime_error("Pollfd not found for fd: " + std::to_string(fd));
+    return result;
+}
+
+Client  &Server::getClientByNick(const std::string& nick) {
+    // find the client object associated with the nickname.
+    std::map<int, Client*>::iterator it = clients.begin();
+    for (; it != clients.end() && it->second->getNick() != nick ; it++)
+        ; // do nothing
+    if (it == clients.end()) {
+        throw std::runtime_error("Client not found for nick: " + nick);
+    }
+    return *it->second; // return the client object.
 }
 
 void    Server::cleanUp() {
@@ -262,13 +276,4 @@ void    Server::cleanUp() {
     }
     fds.clear();
     clients.clear();
-}
-
-Client* Server::getClientByNick(const std::string& nick) {
-    for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it) {
-        if (it->second->getNick() == nick) {
-            return (it->second);
-        }
-    }
-    return NULL;
 }
