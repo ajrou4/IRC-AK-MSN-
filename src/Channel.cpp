@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/29 17:18:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 19:05:25 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
+#include "client.hpp"
 
 Channel::Channel():name("nameChanel"){}
 
@@ -40,12 +41,12 @@ Channel::~Channel(){}
 
 void Channel::addUser(Client& client){
 
-    if(users.size() == userLimit){
+    if(users.size() == static_cast<size_t>(userLimit)){
         std::cout << "Channel is full!"<<std::endl;
         return;
     }
     if(inviteOnly){
-        std::vector<std::string>::iterator it = std::find(this->inviteUser2.begin(), this->inviteUser2.end(), client);
+        std::vector<std::string>::iterator it = std::find(this->inviteUser2.begin(), this->inviteUser2.end(), client.getUserName());
         if(it == inviteUser2.end())
         {
             std::cout << "User " << client.getUserName()  << " is not invited to the channel " << this->name << std::endl;
@@ -53,7 +54,7 @@ void Channel::addUser(Client& client){
         }
     }
     users.push_back(client);
-    inviteUser2.erase(std::remove(inviteUser2.begin(), inviteUser2.end(), client), inviteUser2.end());
+    inviteUser2.erase(std::remove(inviteUser2.begin(), inviteUser2.end(), client.getUserName()), inviteUser2.end());
 
     // std::cout << "User has be add!"<<std::endl;
 }
@@ -139,6 +140,7 @@ bool Channel::isUserInChannel( std::string &username) {
             return true;
         it++;
     }
+    return false;
 }
 
 bool Channel::isOperator( std::string &username){
@@ -149,6 +151,7 @@ bool Channel::isOperator( std::string &username){
             return true;
         it++;
     }
+    return false;
 }
 
 bool Channel::isUserInvited( std::string &username){
@@ -159,6 +162,7 @@ bool Channel::isUserInvited( std::string &username){
             return true;
         it++;
     }
+    return false;
 }
 
 std::string const &Channel::getName()const{
@@ -215,4 +219,5 @@ void    Channel::broadcastMessage(const std::string& message, int from_socket) {
             // send the message to the client
             server->sendMessageToClient(it->getFd(), message);
         }
+}
 }

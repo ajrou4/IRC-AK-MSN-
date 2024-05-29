@@ -6,11 +6,12 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 16:02:39 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/29 17:55:26 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ircserver.hpp"
+#include "ircserver.hpp"
+#include "Channel.hpp"
 
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();
