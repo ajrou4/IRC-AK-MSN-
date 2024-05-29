@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 18:07:09 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 01:53:23 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,10 @@ std::string Client::getUserName() const {
     return username;
 }
 
+std::string Client::getHostname() const {
+    return hostname;
+}
+
 int Client::getFd() const {
     return fd;
 }
@@ -102,7 +106,7 @@ void    Client::setAuthenticated(bool authenticat) {
 }
 
 void    Client::newMessage(const std::string &message) {
-    messageQueue.push_back(message);
+    outboundBuffer << message << "\r\n"; // append the message to the buffer
 }
 
 void    Client::appendToInboundBuffer(std::string data) { // data is comming from a client
@@ -115,6 +119,14 @@ bool    Client::inboundReady() const {
 
 bool    Client::isRegistered() const {
     return registered;
+}
+
+void    Client::setRegistered(bool registered) {
+    this->registered = registered;
+}
+
+void    Client::setNick(const std::string& nick) {
+    nickname = nick;
 }
 
 std::vector<std::string> Client::splitCommands() {
