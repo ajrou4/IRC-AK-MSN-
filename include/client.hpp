@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/28 18:15:48 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 01:51:28 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,11 @@ class Client {
 public:
     Client(int fd, std::string ip, std::string hostname);
     ~Client();
+    /* 
+       ########################################################
+       ---------------- member functions: ---------------------
+       ######################################################## 
+    */
     void                        handleNick(const std::string& nick);
     void                        handleUser(const std::string& user);
     void                        handleJoin(const std::string& channel);
@@ -57,26 +62,26 @@ public:
     std::string                 getUserName() const; // return the client's username.
     int                         getFd() const; // return the client's file descriptor.
     std::string                 getRealName() const;
+    std::string                 getHostname() const;
     void                        setRealName(const std::string& realName);
+    void                        setNick(const std::string& nick);
+    void                        setRegistered(bool registered = true);
+
     // utility function to split the message into command and parameters.
     std::vector<std::string>    splitMessage(const std::string& message);
-    /* 
-       ########################################################
-       ---------------- member functions: ---------------------
-       ######################################################## 
-    */
 
     //                          internal message processing
     void                        handleMessage(const std::string& message);
 
     bool                        isAuthenticated(void) const;
     bool                        outBoundReady(void) const;
+    bool                        inboundReady(void) const;
     bool                        isRegistered(void) const;
 
     void                        setAuthenticated(bool authenticated = true);
     void                        newMessage(const std::string &message);
     void                        appendToInboundBuffer(std::string data);
-    bool                        inboundReady(void) const;
+
     std::vector<std::string>    splitCommands(void);
 };
 

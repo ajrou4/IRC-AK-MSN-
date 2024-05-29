@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/28 17:50:53 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 02:37:30 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,28 +28,27 @@
 #include <netdb.h>
 #include <cstring>
 #include "client.hpp"
+#include "ircserver.hpp"
 
 
 class Channel
 {
     private:
+        std::string                 name;
+        std::string                 key;
+        std::string                 topic;
+        int                         userLimit;
+        bool                        inviteOnly;
+        std::vector<std::string >   inviteUser2;
+        std::vector<Client>         users;
+        std::vector<Client>         oper;
+        Server                      *server; // for server
 
+        bool    isUserInChannel(std::string& username);
+        bool    isOperator(std::string& username);
+        bool    isUserInvited( std::string& username);
 
-        std::string name;
-        std::string key;
-        std::string topic;
-        int userLimit;
-        bool inviteOnly;
-        std::vector<std::string > inviteUser2;
-        std::vector<Client> users;
-        std::vector<Client> oper;
-
-        bool isUserInChannel(std::string& username);
-        bool isOperator(std::string& username);
-        bool isUserInvited( std::string& username);
     public:
-
-
             Channel();
             Channel(std::string const &chName);
             Channel(const Channel &src);
@@ -73,9 +72,14 @@ class Channel
 
             void sendPublicMessage(int from_socket, const std::string &message);
             void sendPrivateMessage(int from_socket, int to_socket, const std::string &message);
+
+            bool    hasClient(int fd) const;
+            
+            void    broadcastMessage(const std::string& message, int from_socket);
 };
 
-#endif/* ************************************************************************** */
+#endif
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */

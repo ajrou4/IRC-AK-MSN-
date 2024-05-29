@@ -3,22 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/28 18:05:08 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 02:29:42 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
 Channel::Channel():name("nameChanel"){}
+
 Channel::Channel(std::string const &chName){
     this->name = chName;
 }
+
 Channel::Channel(const Channel &src){
     *this = src;
 }
+
 Channel &Channel::operator=(const Channel &src)
 {
     if(this!= &src)
@@ -32,7 +35,9 @@ Channel &Channel::operator=(const Channel &src)
     
     return *this;
 }
+
 Channel::~Channel(){}
+
 void Channel::addUser(Client& client){
 
     if(users.size() == userLimit){
@@ -52,9 +57,11 @@ void Channel::addUser(Client& client){
 
     // std::cout << "User has be add!"<<std::endl;
 }
+
 void Channel::addOperator(Client & client){
     oper.push_back(client);
 }
+
 void Channel::kickUser(const std::string &userName){
     std::vector<Client>::iterator it = users.begin();
     while(it != users.end())
@@ -72,6 +79,7 @@ void Channel::kickUser(const std::string &userName){
     it++;
     }
 }
+
 void Channel::setMode(std::string &mode){
     if(mode == "i")
         inviteOnly = true;
@@ -98,6 +106,7 @@ void Channel::setMode(std::string &mode){
     else
         std::cout << "Mode not found"<<std::endl;
 }
+
 void Channel::inviteUser(std::string userName){
     inviteUser2.push_back(userName);
     std::cout << "User "<<userName<<"has been invited to the channel"<< this->name <<std::endl;
@@ -131,6 +140,7 @@ bool Channel::isUserInChannel( std::string &username) {
         it++;
     }
 }
+
 bool Channel::isOperator( std::string &username){
     std::vector<Client >::iterator it = oper.begin();
     while(it != oper.end())
@@ -140,6 +150,7 @@ bool Channel::isOperator( std::string &username){
         it++;
     }
 }
+
 bool Channel::isUserInvited( std::string &username){
     std::vector<std::string>::iterator it = inviteUser2.begin();
     while(it != inviteUser2.end())
@@ -149,12 +160,15 @@ bool Channel::isUserInvited( std::string &username){
         it++;
     }
 }
+
 std::string const &Channel::getName()const{
     return this->name;
 }
+
 std::vector<Client> const &Channel::getUsers()const{
     return this->users;
 }
+
 void Channel::removeUser(Client &client){
     std::vector<Client>::iterator it = users.begin();
     while(it!= users.end())
@@ -167,9 +181,11 @@ void Channel::removeUser(Client &client){
         it++;
     }
 }
+
 const std::string &Channel::getMode()const{
     return this->key;
 }
+
 bool Channel::hasUser(Client &client){
     std::vector<Client>::iterator it = users.begin();
     while(it != users.end())
@@ -179,4 +195,24 @@ bool Channel::hasUser(Client &client){
         it++;
     }
     return false;
+}
+
+bool    Channel::hasClient(int fd) const {
+    std::vector<Client>::const_iterator it = users.begin(); // get the first element
+    while (it != users.end()) {
+        // check if the client is in the channel
+        if (it->getFd() == fd) {
+            return true;
+        }
+        it++;
+    }
+    return false;
+}
+
+void    Channel::broadcastMessage(const std::string& message, int from_socket) {
+    for (std::vector<Client>::iterator it = users.begin(); it != users.end(); it++) {
+        if (it->getFd() != from_socket) {
+            // send the message to the client
+            server->sendMessageToClient(it->getFd(), message);
+        }
 }
