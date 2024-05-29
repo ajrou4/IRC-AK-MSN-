@@ -6,13 +6,25 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/29 17:18:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 23:51:19 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
 
-Channel::Channel():name("nameChanel"){}
+Channel::Channel() : name(""), password(""), userLimit(0), mode(0), server(NULL) {}
+
+Channel::Channel(std::string Name, std::string password, Server *server):
+name(Name), password(password), userLimit(0), mode(0), server(server) {
+    if (!password.empty()) {
+        mode |= (1 << Key); // set the password mode
+    } else {
+        mode &= ~(1 << Key); // unset the password mode
+    }
+    if (name[0] != '#') {
+        name = "#" + name;
+    }
+}
 
 Channel::Channel(std::string const &chName){
     this->name = chName;
@@ -38,47 +50,50 @@ Channel &Channel::operator=(const Channel &src)
 
 Channel::~Channel(){}
 
-void Channel::addUser(Client& client){
+// void Channel::addUser(Client& client){
 
-    if(users.size() == userLimit){
-        std::cout << "Channel is full!"<<std::endl;
-        return;
-    }
-    if(inviteOnly){
-        std::vector<std::string>::iterator it = std::find(this->inviteUser2.begin(), this->inviteUser2.end(), client);
-        if(it == inviteUser2.end())
-        {
-            std::cout << "User " << client.getUserName()  << " is not invited to the channel " << this->name << std::endl;
-            return;
-        }
-    }
-    users.push_back(client);
-    inviteUser2.erase(std::remove(inviteUser2.begin(), inviteUser2.end(), client), inviteUser2.end());
+//     if(users.size() == userLimit) {
+//         std::cout << "Channel is full!"<<std::endl;
+//         return;
+//     }
+//     if(inviteOnly){
+//         std::vector<std::string>::iterator it = std::find(this->inviteUser2.begin(), this->inviteUser2.end(), client);
+//         if(it == inviteUser2.end())
+//         {
+//             std::cout << "User " << client.getUserName()  << " is not invited to the channel " << this->name << std::endl;
+//             return;
+//         }
+//     }
+//     users.push_back(client);
+//     inviteUser2.erase(std::remove(inviteUser2.begin(), inviteUser2.end(), client), inviteUser2.end());
+// }
 
-    // std::cout << "User has be add!"<<std::endl;
+void    Channel::addOperator(int socket) {
+    if (!isOperator(socket)) {
+        // add the client to the channel
+        operators.push_back(socket);
+    } else {
+        std::cerr << "Client already in the channel" << std::endl;
+    }
 }
 
-void Channel::addOperator(Client & client){
-    oper.push_back(client);
-}
-
-void Channel::kickUser(const std::string &userName){
-    std::vector<Client>::iterator it = users.begin();
-    while(it != users.end())
-    {
-        if(it->getUserName() == userName)
-        {
-            users.erase(it);
-            std::cout << "User "<<userName<<"has been kicked form channel"<< this->name <<std::endl;
-            break;
-        }
+// void Channel::kickUser(const std::string &userName){
+//     std::vector<Client>::iterator it = users.begin();
+//     while(it != users.end())
+//     {
+//         if(it->getUserName() == userName)
+//         {
+//             users.erase(it);
+//             std::cout << "User "<<userName<<"has been kicked form channel"<< this->name <<std::endl;
+//             break;
+//         }
     
-    else{
-        std::cout << "User "<<userName<<"is not  in the channel"<< this->name <<std::endl;
-    }
-    it++;
-    }
-}
+//     else{
+//         std::cout << "User "<<userName<<"is not  in the channel"<< this->name <<std::endl;
+//     }
+//     it++;
+//     }
+// }
 
 void Channel::setMode(std::string &mode){
     if(mode == "i")
@@ -131,35 +146,48 @@ void Channel::sendPublicMessage(int from_socket, const std::string &message){
     }
 }
 
-bool Channel::isUserInChannel( std::string &username) {
-    std::vector<Client>::iterator it = users.begin();
-    while(it != users.end())
-    {
-        if(it->getUserName() == username)
+// bool Channel::isUserInChannel( std::string &username) {
+//     std::vector<Client>::iterator it = users.begin();
+//     while(it != users.end())
+//     {
+//         if(it->getUserName() == username)
+//             return true;
+//         it++;
+//     }
+//     return false;
+// }
+
+// bool Channel::isOperator( std::string &username){
+//     std::vector<Client >::iterator it = oper.begin();
+//     while(it != oper.end())
+//     {
+//        if(it->getUserName() == username)
+//             return true;
+//         it++;
+//     }
+// }
+
+bool    Channel::isOperator(int fd) {
+    std::vector<int>::iterator it = operators.begin();
+    while (it != operators.end()) {
+        if (*it == fd) {
             return true;
+        }
         it++;
     }
+    return false;
 }
 
-bool Channel::isOperator( std::string &username){
-    std::vector<Client >::iterator it = oper.begin();
-    while(it != oper.end())
-    {
-       if(it->getUserName() == username)
-            return true;
-        it++;
-    }
-}
-
-bool Channel::isUserInvited( std::string &username){
-    std::vector<std::string>::iterator it = inviteUser2.begin();
-    while(it != inviteUser2.end())
-    {
-        if(*it == username)
-            return true;
-        it++;
-    }
-}
+// bool Channel::isUserInvited( std::string &username){
+//     std::vector<std::string>::iterator it = inviteUser2.begin();
+//     while(it != inviteUser2.end())
+//     {
+//         if(*it == username)
+//             return true;
+//         it++;
+//     }
+//     return false;
+// }
 
 std::string const &Channel::getName()const{
     return this->name;
@@ -169,22 +197,47 @@ std::vector<Client> const &Channel::getUsers()const{
     return this->users;
 }
 
-void Channel::removeUser(Client &client){
-    std::vector<Client>::iterator it = users.begin();
-    while(it!= users.end())
-    {
-        if(it->getUserName() == client.getUserName())
-        {
-            users.erase(it);
+// void Channel::removeUser(Client &client){
+//     std::vector<Client>::iterator it = users.begin();
+//     while(it!= users.end())
+//     {
+//         if(it->getUserName() == client.getUserName())
+//         {
+//             users.erase(it);
+//             break;
+//         }
+//         it++;
+//     }
+// }
+
+bool    Channel::getMode(ChannelMode KEY)const {
+    return mode & (1 << KEY); // check if the mode is set.
+}
+
+const std::string Channel::getPassword() const {
+    return password;
+}
+
+void    Channel::addClient(int fd) {
+    if (!hasClient(fd)) {
+        // add the client to the channel
+        clients.push_back(fd);
+    } else {
+        std::cerr << "Client already in the channel" << std::endl;
+    }
+}
+
+void    Channel::removeInv(int fd) {
+    std::vector<int>::iterator it = clients.begin();
+    while (it != invites.end()) {
+        if (*it == fd) {
+            // remove the client from the channel
+            invites.erase(it);
             break;
         }
         it++;
     }
-}
-
-const std::string &Channel::getMode()const{
-    return this->key;
-}
+}   
 
 bool Channel::hasUser(Client &client){
     std::vector<Client>::iterator it = users.begin();
@@ -209,10 +262,36 @@ bool    Channel::hasClient(int fd) const {
     return false;
 }
 
-void    Channel::broadcastMessage(const std::string& message, int from_socket) {
-    for (std::vector<Client>::iterator it = users.begin(); it != users.end(); it++) {
-        if (it->getFd() != from_socket) {
-            // send the message to the client
-            server->sendMessageToClient(it->getFd(), message);
+void    Channel::broadcastMessage(const std::string& message) {
+    for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
+        // send the message to all clients in the channel
+        server->sendMessageToClient(*it, message);
+    }
+}
+
+void    Channel::brodcastMessage(std::string message, int fd) {
+    for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
+        // send the message to all clients in the channel except the sender
+        if (*it != fd) {
+            server->sendMessageToClient(*it, message);
         }
+    }
+}
+
+std::string Channel::getModes() const {
+    std::string modes = "+n";
+    if (getMode(invit_ONLY)) {
+        modes += "i";
+    } if (getMode(Key)) {
+        modes += "k";
+    } if (getMode(ToPic)) {
+        modes += "t";
+    } if (getMode(Limit)) {
+        modes += "l";
+    } if (getMode(Moderated)) {
+        modes += "m";
+    } if (getMode(Secret)) {
+        modes += "s";
+    }
+    return modes;
 }

@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 17:23:56 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/29 23:08:15 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ void    Server::USER(int socket, std::string params) {
     if (username.size() < 1 || username.size() > 12
         || username.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != std::string::npos
         || username.find_first_of("0123456789", 0, 1) == 0) {
-        sendMessageCommand(socket, ":irc 432 " + username + " :Erroneous username");
-        return;
+            sendMessageCommand(socket, ":irc 432 " + username + " :Erroneous username");
+            return;
     }
     if (!realname.empty() && (realname.size() > 50 || realname.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]{}\\|^`_- ") != std::string::npos)) {
         sendMessageCommand(socket, ":irc 501 " + realname + " : Invalid Realname");
@@ -101,22 +101,61 @@ void    Server::USER(int socket, std::string params) {
 }
 
 void    Server::JOIN(int socket, std::string channelName) {
-    static_cast<void>(socket);
-    static_cast<void>(channelName);
-    // Client& client = getClient(socket);
-    // if (!client.isAuthenticated()) {
-    //     sendMessageCommand(socket, ":irc.example.com 451 * :You have not registered");
-    //     return;
-    // }
+    Client& client = getClient(socket);
 
-    // if (channels.find(channelName) == channels.end()) {
-    //     channels[channelName] = Channel(channelName);
-    // }
-
-    // channels[channelName].addUser(client);
-    // std::string joinMessage = ":" + client.getNick() + "!" + client.getUserName() + "@irc.example.com JOIN :" + channelName;
-    // //broadcastMessage(joinMessage, channelName);
-    // sendMessageCommand(socket, joinMessage);
+    std::string channel_name, channel_key;
+    std::istringstream iss(channelName);
+    iss >> channel_name >> std::ws; // get the channel name and get rid of the leading whitespace
+    iss >> channel_key; // get the channel key
+    if (channel_name.empty()){
+        sendMessageCommand(socket, ":irc 461  JOIN :Not enough parameters");
+        return;
+    }
+    if (channel_name[0] == '#') {
+        channel_name = channel_name.substr(1); // remove the leading #
+    }
+    if (channel_name.size() < 1 || channel_name.size() > 20
+        || channel_name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_") != std::string::npos
+        || channel_name.find_first_of("0123456789", 0, 1) == 0) {
+            sendMessageCommand(socket, ":irc 403 " + channel_name + " :No such channel");
+            return;
+    }
+    channel_name = "#" + channel_name; // add the leading #
+    try {
+        Channel& channel = getChannel(channel_name);
+        channel_name = channel.getName();
+        if (channel.getMode(Key) && (channel_key.empty() || channel_key != channel.getPassword())) {
+            sendMessageCommand(socket, ":irc 475 " + channel_name + " :Cannot join channel (+k)");
+            return;
+        }
+        if (channel.getMode(Limit) && channel.getUsers().size() >= channel.getMode(Limit)) {
+            sendMessageCommand(socket, ":irc 471 " + channel_name + " :Cannot join channel (+l)");
+            return;
+        }
+        if (channel.getMode(invit_ONLY) && !channel.hasClient(socket)) {
+            sendMessageCommand(socket, ":irc 473 " + channel_name + " :Cannot join channel (+i)");
+            return;
+        }
+        // if the client is not already in the channel, add them
+        channel.addClient(socket);
+        channel.removeInv(socket); // remove the client from the invite list
+        if (channel.getUsers().size() == 1) {
+            channel.addOperator(socket); // make the client an operator if they are the first in the channel
+        }
+        channel.broadcastMessage(":" + client.getNick() + " JOIN " + channel_name);
+        sendMessageCommand(socket, ":irc 332 " + client.getNick() + " " + channel_name + " :" + channel.getTopic());
+        sendMessageCommand(socket, ":irc 353 " + client.getNick() + " = " + channel_name + " :" + client.getNick());
+        sendMessageCommand(socket, ":irc 366 " + client.getNick() + " " + channel_name + channel.getModes());
+    } catch (std::runtime_error& e) {
+        createChannel(channel_name, channel_key);
+        Channel& channel = getChannel(channel_name);
+        channel.addClient(socket); // add the client to the channel
+        channel.addOperator(socket); // make the client an operator if they are the first in the channel
+        channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " JOIN " + channel_name);
+        sendMessageCommand(socket, ":irc 331 " + client.getNick() + " " + channel_name + " :No topic is set");
+        sendMessageCommand(socket, ":irc 353 " + client.getNick() + " = " + channel_name + " : " + client.getNick());
+        sendMessageCommand(socket, ":irc 324 " + client.getNick() + " " + channel_name + " " + channel.getModes());
+    }
 }
 
 void    Server::LIST(int socket, std::string list) {
