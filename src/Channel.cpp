@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/29 23:51:19 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 10:48:13 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,4 +294,16 @@ std::string Channel::getModes() const {
         modes += "s";
     }
     return modes;
+}
+void Channel::removeClient(int fd){
+    std::vector<int>::iterator it = clients.begin();
+    while(it != clients.end())
+    {
+        if(*it = fd)
+        {
+            clients.erase(it);
+            break;
+        }
+        it++;
+    }
 }

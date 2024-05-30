@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 22:20:28 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 12:21:55 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ public:
     //              register a new client.
     void            registerNewClient(int socket);
     //              CMDS
+    void            CAP(int socket, std::string cap);// Client Capability Negotiation : https://tools.ietf.org/html/rfc2812#section-3.2.6 // https://ircv3.net/specs/extensions/capability-negotiation.html // https://modern.ircdocs.horse/ircv3.html#cap
     void            PASS(int socket, std::string pass);
     void            NICK(int socket, std::string nickname);
     void            USER(int socket, std::string user);
