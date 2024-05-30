@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 18:06:31 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 21:13:21 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,23 @@ public:
     void                        handleJoin(const std::string& channel);
     void                        handlePrivmsg(const std::string& target, const std::string& message);
 
-    const std::string&          getNick(void) const;
-    std::string                 getUserName(void) const; // return the client's username.
     int                         getFd(void) const; // return the client's file descriptor.
-    std::string                 getRealName(void) const;
-    std::string                 getHostname(void) const;
+
+    const std::string&          getRealName(void) const;
+    const std::string&          getHostname(void) const;
+    const std::string&          getNick(void) const;
+    const std::string&          getUserName(void) const; // return the client's username.
+
     std::string                 getOutboundBuffer(void);
     void                        advOutboundBuffer(size_t n);
+
     void                        setRealName(std::string realName);
     void                        setUserName(std::string userName);
     void                        setNick(const std::string& nick);
     void                        setRegistered(bool registered = true);
 
-    // utility function to split the message into command and parameters.
-    std::vector<std::string>    splitMessage(const std::string& message);
+    std::vector<std::string>    splitMessage(const std::string& message); // utility function to split the message into command and parameters.
+    std::vector<std::string>    splitCommands(void); // utility function to split the message into command and parameters.
 
     //                          internal message processing
     void                        handleMessage(const std::string& message);
@@ -86,8 +89,6 @@ public:
     void                        setAuthenticated(bool authenticated = true);
     void                        newMessage(const std::string &message);
     void                        appendToInboundBuffer(std::string data);
-
-    std::vector<std::string>    splitCommands(void);
 };
 
 #endif

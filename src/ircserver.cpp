@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 17:45:17 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 21:05:36 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void    Server::initializeServer() {
     struct sockaddr_in  server_addr;
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd == -1) {
+    if (server_fd < 0) {
         std::cerr << "Socket creation error: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -70,14 +70,14 @@ void    Server::initializeServer() {
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(port);
-    if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
+    if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         std::cerr << "Bind error: " << strerror(errno) << std::endl;
         close(server_fd);
         exit(EXIT_FAILURE);
     }
 
     // listen for incoming connections
-    if (listen(server_fd, SOMAXCONN) == -1) {
+    if (listen(server_fd, SOMAXCONN) < 0) {
         std::cerr << "Listen error: " << strerror(errno) << std::endl;
         close(server_fd);
         exit(EXIT_FAILURE);
@@ -89,7 +89,7 @@ void    Server::initializeServer() {
     server_pollfd.events = POLLIN | POLLERR | POLLHUP; // events to monitor: POLLIN: there's data to read, POLLERR: there's an error, POLLHUP: the client disconnected
     fds.push_back(server_pollfd);
 
-    std::cout << "Server started on 0.0.0.0 :" << port << std::endl;
+    std::cout << "Server started on 0.0.0.0 : " << port << std::endl;
 }
 
 // main loop of the server:
@@ -145,11 +145,11 @@ void    Server::handleNewConnection() {
     socklen_t           client_len = sizeof(client_addr); // lenght of the client address structure.
     //                  accept the new connection.
     int                 client_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_len);
+
     if (client_fd < 0) {
         std::cerr << "Accept error: " << strerror(errno) << std::endl;
         return;
     }
-
     // set the new client socket to non-blocking mode.
     if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1) {
         std::cerr << "Fcntl error: " << strerror(errno) << std::endl;
@@ -166,7 +166,6 @@ void    Server::handleNewConnection() {
     clients[client_fd] = new Client(client_fd, clientIp, clientIp); // create a new client object.
 
     std::cout << "New connection from " << clientIp << std::endl;
-
 }
 
 // handle a message from a client:
@@ -174,7 +173,7 @@ void    Server::handleClientMessage(int client_fd) {
     char    buffer[4096]; // buffer to reading data.
     int     bytes_read;
     Client& client = getClient(client_fd);
-    if ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) == -1) {
+    if ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) <= 0) {
         return;
     }
     else
@@ -208,8 +207,8 @@ struct pollfd& Server::getPollfd(int fd) {
 }
 
 void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
-    std::vector<std::string>::iterator it = cmds.begin();
     Client& client = getClient(fd_client);
+    std::vector<std::string>::iterator it = cmds.begin();
     while (it != cmds.end()) {
         std::cout << "<<<<< Recieved from socket: " << fd_client << ": " << *it << std::endl;
         std::string command_name;
@@ -217,14 +216,14 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
         std::stringstream ss(*it);
         
         ss >> command_name >> std::ws;  // extract the command name
-        std::transform(command_name.begin(), command_name.end(), command_name.begin(), ::toupper);
+        std::transform(command_name.begin(), command_name.end(), command_name.begin(), ::toupper); // convert the command name to uppercase
         std::getline(ss, command_params, '\0'); // extract the command parameters
         if (command_name != "PASS" && !client.isAuthenticated()) { // if the client is not authenticated
-            sendMessageToClient(fd_client, ":irc 451 :You have not registered");
+            sendMessageCommand(fd_client, ":irc 451 :You have not registered");
         } else if (command_name != "PASS" && command_name != "NICK" && command_name != "USER" && !client.isRegistered()) {
-            sendMessageToClient(fd_client, ":irc 451 :You have not registered");
+            sendMessageCommand(fd_client, ":irc 451 :You have not registered");
         } else if (commands.find(command_name) == commands.end()) {
-            sendMessageToClient(fd_client, ":irc 421 " + command_name + " : Unknown command");
+            sendMessageCommand(fd_client, ":irc 421 " + command_name + " : Unknown command");
         } else if (command_name == "QUIT") {
             QUIT(fd_client, command_params);
         } else {
@@ -232,16 +231,6 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
         }
         it++;
     }
-}
-
-void    Server::sendMessageToClient(int client_fd, const std::string& message) {
-    Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
-    client.newMessage(message); // add the message to the client message queue
-    std::cout << ">>>>> Sending into socket " << client_fd << ": " << message << std::endl;
-
-    // mark the client_fd as ready for wrinting
-    struct pollfd &client_pollfd = getPollfd(client_fd);
-    client_pollfd.events |= POLLOUT;
 }
 
 void    Server::sendMessageToClientChannels(int client_fd, const std::string &message) {
@@ -301,6 +290,26 @@ void    Server::createChannel(std::string channel_name, std::string password, st
     Channel* channel = new Channel(channel_name, password, this); // create a new channel object to store the channel information.
     channel->setTopic(topic); // set the channel topic
     channels.insert(std::make_pair(val, channel)); // add the channel to the map of channels.
+}
+
+void    Server::removeClient(int fd) {
+    std::map<int, Client*>::iterator it = clients.find(fd); // find the client object associated with the file descriptor.
+    if (it != clients.end()) {
+        std::vector<Channel*> channels = getChannels(fd);
+        for (size_t i = 0; i < channels.size(); i++) {
+            helperOperator(*channels[i], getClient(fd), *this);
+            channels[i]->removeClient(fd); // remove the client from the channel.
+        }
+        delete it->second; // delete the client object.
+        clients.erase(it); // remove the client from the map of clients.
+    }
+    std::vector<struct pollfd>::iterator it2 = fds.begin(); // find the client in the list of file descriptors to poll.
+    for (; it2 != fds.end() && it2->fd != fd; it2++)
+        ; // do nothing
+    if (it2 != fds.end()) {
+        fds.erase(it2); // remove the client from the list of file descriptors to poll.
+    }
+    std::cout << "Client desconnected from the Socket: " << fd << std::endl;
 }
 
 void    Server::cleanUp() {

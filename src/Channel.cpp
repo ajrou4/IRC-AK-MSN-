@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/30 03:40:24 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 20:55:05 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,7 +254,7 @@ bool    Channel::hasClient(int fd) const {
 void    Channel::broadcastMessage(std::string message) {
     for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
         // send the message to all clients in the channel
-        server->sendMessageToClient(*it, message);
+        server->sendMessageCommand(*it, message);
     }
 }
 
@@ -262,7 +262,7 @@ void    Channel::brodcastMessage(std::string message, int fd) {
     for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
         // send the message to all clients in the channel except the sender
         if (*it != fd) {
-            server->sendMessageToClient(*it, message);
+            server->sendMessageCommand(*it, message);
         }
     }
 }
@@ -295,4 +295,18 @@ void    Channel::removeClient(int fd) {
         }
         it++;
     }
-}   
+}
+
+void    helperOperator(Channel &channel, Client &client, Server &server) {
+    int fd = client.getFd();
+    if (channel.isOperator(fd) && channel.getUsers().size() == 1) {
+        std::vector<int> users = channel.getUsers();
+        for (size_t i = 0; i < users.size(); i++) {
+            if (users[i] != fd) {
+                channel.addOperator(users[i]);
+                channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " MODE " + channel.getName() + " +o " + server.getClient(users[i]).getNick());
+                break;
+            }
+        }
+    }
+}

@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 22:20:28 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 21:20:34 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,39 +72,39 @@ public:
     Server(int port, const std::string& password);
 
     //              main loop for polling and handling events.
-    void            pollLoop();
+    void                    pollLoop();
 
-    struct pollfd&  getPollfd(int fd);
-    Client&         getClient(int fd); // return the client object associated with the file descriptor.
-    Client&         getClientByNick(const std::string& nick); // return the client object associated with the nickname.
-    Channel&        getChannel(std::string& channel); // return the channel object associated with the channel name.
-    void            sendMessageToClient(int client_fd, const std::string &message);
-    void            commandsProcess(std::vector<std::string> cmds, int fd_client);
-    void            sendMessageCommand(int socket, const std::string& message); // send a message to a client.
-    void            sendMessageToClientChannels(int client_fd, const std::string &message);
+    struct pollfd&          getPollfd(int fd);
+    Client&                 getClient(int fd); // return the client object associated with the file descriptor.
+    Client&                 getClientByNick(const std::string& nick); // return the client object associated with the nickname.
+    Channel&                getChannel(std::string& channel); // return the channel object associated with the channel name.
+    void                    commandsProcess(std::vector<std::string> cmds, int fd_client);
+    void                    sendMessageCommand(int socket, const std::string& message); // send a message to a client.
+    void                    sendMessageToClientChannels(int client_fd, const std::string &message); // send a message to all channels the client is in.
+    void                    removeClient(int fd); // remove a client from the server.
 
     std::vector<Channel*>   getChannels(int client_fd);
     void                    createChannel(std::string channel_name, std::string password, std::string topic = "");
 
-    //              register a new client.
-    void            registerNewClient(int socket);
-    //              CMDS
-    void            PASS(int socket, std::string pass);
-    void            NICK(int socket, std::string nickname);
-    void            USER(int socket, std::string user);
-    void            LIST(int socket, std::string list);
-    void            JOIN(int socket, std::string join);
-    void            PART(int socket, std::string part);
-    void            WHO(int socket, std::string who);
-    void            WHOIS(int socket, std::string whois);
-    void            PING(int socket, std::string ping);
-    void            PRIVMSG(int socket, std::string privmsg);
-    void            QUIT(int socket, std::string quit);
-    void            KICK(int socket, std::string kick);
-    void            INVITE(int socket, std::string invite);
-    void            TOPIC(int socket, std::string topic);
-    void            ISON(int socket, std::string ison);
-    void            MODE(int socket, std::string mode);
+    //                      register a new client.
+    void                    registerNewClient(int socket);
+    //                      CMDS
+    void                    PASS(int socket, std::string pass);
+    void                    NICK(int socket, std::string nickname);
+    void                    USER(int socket, std::string user);
+    void                    LIST(int socket, std::string list);
+    void                    JOIN(int socket, std::string join);
+    void                    PART(int socket, std::string part);
+    void                    WHO(int socket, std::string who);
+    void                    WHOIS(int socket, std::string whois);
+    void                    PING(int socket, std::string ping);
+    void                    PRIVMSG(int socket, std::string privmsg);
+    void                    QUIT(int socket, std::string quit);
+    void                    KICK(int socket, std::string kick);
+    void                    INVITE(int socket, std::string invite);
+    void                    TOPIC(int socket, std::string topic);
+    void                    ISON(int socket, std::string ison);
+    void                    MODE(int socket, std::string mode);
 
     // destructor:
     ~Server();

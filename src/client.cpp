@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 18:04:57 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 21:11:44 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,15 @@ void    Client::handlePrivmsg(const std::string& target, const std::string& mess
     std::cout << "Private messge to " << target << ": " << message << std::endl; 
 }
 
-std::string Client::getUserName() const {
+const std::string&   Client::getRealName() const {
+    return realname;
+}
+
+const std::string&   Client::getUserName() const {
     return username;
 }
 
-std::string Client::getHostname() const {
+const std::string&   Client::getHostname() const {
     return hostname;
 }
 
@@ -145,9 +149,9 @@ std::vector<std::string> Client::splitCommands() {
     while (pos != std::string::npos) {
         std::string command = line.substr(0, pos); // extract the command
         if (command.size() > 0) {
-            result.push_back(command);
+            result.push_back(line.substr(0, pos));
         }
-        line = line.substr(pos + 2); // remove the command from the buffer
+        line.erase(0, pos + 2); // remove the command from the buffer
     }
     inboundBuffer.str(line); // update the buffer
     return result;
