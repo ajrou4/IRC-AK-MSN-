@@ -3,11 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
 /*   Updated: 2024/05/30 00:25:47 by omakran          ###   ########.fr       */
-/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
@@ -23,6 +22,8 @@
 # include <vector>
 #include "Channel.hpp"
 
+class Channel;
+// class Server;
 class Client {
     //                          client socket file descriptor
     int                         fd;

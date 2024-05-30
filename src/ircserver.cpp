@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/ircserver.hpp"
+#include "ircserver.hpp"
+#include "Channel.hpp"
 
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();

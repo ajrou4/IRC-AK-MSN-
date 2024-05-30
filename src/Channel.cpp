@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
 /*   Updated: 2024/05/29 23:51:19 by omakran          ###   ########.fr       */
@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "Channel.hpp"
+#include "client.hpp"
 
 Channel::Channel() : name(""), password(""), userLimit(0), mode(0), server(NULL) {}
 
@@ -51,7 +52,6 @@ Channel &Channel::operator=(const Channel &src)
 Channel::~Channel(){}
 
 // void Channel::addUser(Client& client){
-
 //     if(users.size() == userLimit) {
 //         std::cout << "Channel is full!"<<std::endl;
 //         return;
