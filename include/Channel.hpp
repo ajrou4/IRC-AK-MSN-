@@ -6,7 +6,7 @@
 /*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/30 10:45:52 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/30 17:09:56 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class Channel
         int                         userLimit;
         bool                        inviteOnly;
         std::vector<std::string >   inviteUser2;
-        std::vector<Client>         users;
+        // std::vector<Client>         users;
         std::vector<Client>         oper;
         int                         mode;
         std::vector<int>            clients;
@@ -88,10 +88,8 @@ class Channel
             void inviteUser(std::string userName);
             void setTopic(const std::string &topic);
             // void joinChannel(Client& client);
-            const std::vector<Client>  &getUsers()const;
-            
+            const std::vector<int>  &getUsers()const;
 
-            bool    hasUser(Client &client);
             const std::string  &getTopic() const;
 
             void sendPublicMessage(int from_socket, const std::string &message);
@@ -102,7 +100,7 @@ class Channel
             void        removeInv(int fd);
             bool        isOperator(int fd);
             std::string getModes() const; // return the channel modes as a string.
-            void        broadcastMessage(const std::string& message); // send a message to all clients in the channel.
+            void        broadcastMessage(std::string message); // send a message to all clients in the channel.
             void        brodcastMessage(std::string message, int fd); // send a message to all clients in the channel except the sender.
             void        removeClient(int fd); // remove a client from the channel.
 };
