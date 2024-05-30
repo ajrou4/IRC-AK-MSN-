@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 16:51:47 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 18:15:18 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@ void    Server::registerNewClient(int socket) {
     Client& client = getClient(socket);
 
     client.setRegistered(true);
-    sendMessageCommand(socket, ":irc 001 " + client.getNick() + " :Welcome " + client.getNick() + "!" + client.getUserName() + " @ " + client.getHostname());
-    sendMessageCommand(socket, ":irc 002 " + client.getNick() + " :Your host is ircserv, running version 1.0");
-    sendMessageCommand(socket, ":irc 003 " + client.getNick() + " :This server was created today");
-    sendMessageCommand(socket, ":irc 004 " + client.getNick() + " :ircserv 1.0 o o");
-    sendMessageCommand(socket, ":irc 375 " + client.getNick() + " :- ircserv Message of the day - ");
-    sendMessageCommand(socket, ":irc 372 " + client.getNick() + " :- Welcome to ircserv");
-    sendMessageCommand(socket, ":irc 376 " + client.getNick() + " :End of /MOTD command.");
+    sendMessageCommand(socket, ":irc 001 " + client.getNick() + " : Welcome " + client.getNick() + "!" + client.getUserName() + " @" + client.getHostname());
+    sendMessageCommand(socket, ":irc 002 " + client.getNick() + " : Your host is ircserv, running version 1.0");
+    sendMessageCommand(socket, ":irc 003 " + client.getNick() + " : This server was created today");
+    sendMessageCommand(socket, ":irc 004 " + client.getNick() + " : ircserv 1.0 o o");
+    sendMessageCommand(socket, ":irc 005 " + client.getNick() + " : MODES=i,t,k,l,s :are supported by this server");
+    sendMessageCommand(socket, ":irc 375 " + client.getNick() + " : - ircserv Message of the day - ");
+    sendMessageCommand(socket, ":irc 372 " + client.getNick() + " : - Welcome to ircserv");
+    sendMessageCommand(socket, ":irc 376 " + client.getNick() + " : End of /MOTD command.");
 }
 
 void    Server::sendMessageCommand(int socket, const std::string& message){

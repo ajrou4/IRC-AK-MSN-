@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 10:43:04 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:45:17 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,7 @@ void    Server::handleClientMessage(int client_fd) {
     {
         buffer[bytes_read] = '\0'; // null terminate the buffer.
     }
+
     client.appendToInboundBuffer(std::string(buffer, bytes_read)); // append the data to the client's inbound buffer.
     if (client.inboundReady()) {
         std::vector<std::string> commands = client.splitCommands();

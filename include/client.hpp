@@ -3,13 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 00:25:47 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 18:06:31 by omakran          ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
+# ifndef CLIENT_HPP
 # define CLIENT_HPP
 
 # include <string>
@@ -20,7 +21,7 @@
 # include <iostream>
 # include <sstream>
 # include <vector>
-#include "Channel.hpp"
+# include "Channel.hpp"
 
 class Channel;
 // class Server;
@@ -59,7 +60,7 @@ public:
     void                        handleJoin(const std::string& channel);
     void                        handlePrivmsg(const std::string& target, const std::string& message);
 
-    std::string                 getNick(void) const;
+    const std::string&          getNick(void) const;
     std::string                 getUserName(void) const; // return the client's username.
     int                         getFd(void) const; // return the client's file descriptor.
     std::string                 getRealName(void) const;
