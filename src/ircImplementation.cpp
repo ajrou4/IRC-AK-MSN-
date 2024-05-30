@@ -6,12 +6,13 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 23:08:15 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 02:53:42 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ircserver.hpp"
 #include "client.hpp"
+#include "Channel.hpp"
 
 /* ------------ this file will implement the logic of ARC --------------
 |                        let's parss each command                       |
@@ -158,31 +159,55 @@ void    Server::JOIN(int socket, std::string channelName) {
     }
 }
 
-void    Server::LIST(int socket, std::string list) {
-    static_cast<void>(socket);
-    static_cast<void>(list);
-    // sendMessageCommand(socket, ":server.name 321 Channel :Users Name");
-    // for (std::map<std::string, Channel>::iterator it = channels.begin(); it != channels.end(); ++it) {
-    //     const Channel& channel = it->second;
-    //     sendMessageCommand(socket, ":server.name 322 " + channel.getName() + " " + std::to_string(channel.getUsers().size()) + " :" + channel.getTopic());
-    // }
-    // sendMessageCommand(socket, ":server.name 323 :End of LIST");
+void    Server::LIST(int socket, std::string) {
+    Client  &client = getClient(socket);
+
+    sendMessageCommand(socket, ":irc 321 " + client.getNick() + " Channel :Users Name");
+    std::map<std::string, Channel*>::iterator it = channels.begin();
+    for (; it != channels.end(); ++it) {
+        std::stringstream ss; // create a stringstream to store the message
+        Channel& channel = *it->second; // get the channel
+        if (channel.getMode(Secret)) {
+            continue; // skip secret channels
+        }
+        ss << ":irc 322 " << client.getNick() << " " << channel.getName() << " " << channel.getUsers().size() << " :" << channel.getTopic();
+        sendMessageCommand(socket, ss.str());
+    }
+    sendMessageCommand(socket, ":irc 323 " + client.getNick() + " :End of /LIST");
 }
 
 void    Server::PART(int socket, std::string part) {
-    static_cast<void>(socket);
-    static_cast<void>(part);
-    // Client& client = getClient(socket);
-    // std::string channelName = part.substr(part.find(' ') + 1);
-    
-    // std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    // if (it != channels.end()) {
-    //     Channel& channel = it->second;
-    //     channel.removeUser(client);
-    //     sendMessageCommand(socket, ":" + client.getNick() + " PART " + channelName);
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + channelName + " :No such channel");
-    // }
+    Client& client = getClient(socket);
+    std::stringstream ss(part); // create a stringstream from the message
+    std::string channelName;
+    ss >> channelName; // get the channel name
+    if (channelName.empty()) {
+        sendMessageCommand(socket, ":irc 461 PART :Not enough parameters");
+        return;
+    }
+    try {
+        Channel& channel = getChannel(channelName);
+        if (!channel.hasClient(socket)) {
+            sendMessageCommand(socket, ":irc 442 " + channelName + " :You're not on that channel");
+            return;
+        }
+        int socket = client.getFd();
+        if (channel.isOperator(socket) && channel.getUsers().size() == 1) {
+            std::vector<int> users = channel.getUsers();
+            for (size_t i = 0; i < users.size(); i++) {
+                if (users[i] != socket) {
+                    channel.addOperator(users[i]);
+                    channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " MODE " + channel.getName() + " +o " + getClient(users[i]).getNick());
+                    break;
+                }
+            }
+            
+        }
+        channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PART " + part);
+        channel.removeClient(socket);
+    } catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":irc 403 " + client.getNick() + " " + channelName + " :No such channel");
+    } 
 }
 
 void    Server::WHO(int socket, std::string who) {
@@ -223,7 +248,7 @@ void    Server::WHOIS(int socket, std::string whois) {
 
 void    Server::PING(int socket, std::string ping) {
     std::string server = ping.substr(ping.find(' ') + 1);
-    sendMessageCommand(socket, "PONG " + server);
+    sendMessageCommand(socket, ":irc PONG " + server);
 }
 
 void    Server::PRIVMSG(int socket, std::string privmsg) {

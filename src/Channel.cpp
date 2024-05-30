@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/29 23:51:19 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 03:40:24 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,17 +134,17 @@ const std::string &Channel::getTopic()const{
     return this->topic;
 }
 
-void Channel::sendPublicMessage(int from_socket, const std::string &message){
-    std::vector<Client>::iterator it = users.begin();
-    while(it != users.end())
-    {
-        if(it->getFd() != from_socket)
-        {
-            std::cout << "Message: "<<message<<std::endl;
-        }
-        it++;
-    }
-}
+// void Channel::sendPublicMessage(int from_socket, const std::string &message){
+//     std::vector<Client>::iterator it = users.begin();
+//     while(it != users.end())
+//     {
+//         if(it->getFd() != from_socket)
+//         {
+//             std::cout << "Message: "<<message<<std::endl;
+//         }
+//         it++;
+//     }
+// }
 
 // bool Channel::isUserInChannel( std::string &username) {
 //     std::vector<Client>::iterator it = users.begin();
@@ -193,8 +193,8 @@ std::string const &Channel::getName()const{
     return this->name;
 }
 
-std::vector<Client> const &Channel::getUsers()const{
-    return this->users;
+const std::vector<int>  &Channel::getUsers()const{
+    return this->clients;
 }
 
 // void Channel::removeUser(Client &client){
@@ -239,22 +239,11 @@ void    Channel::removeInv(int fd) {
     }
 }   
 
-bool Channel::hasUser(Client &client){
-    std::vector<Client>::iterator it = users.begin();
-    while(it != users.end())
-    {
-        if(it->getUserName() == client.getUserName())
-            return true;
-        it++;
-    }
-    return false;
-}
 
 bool    Channel::hasClient(int fd) const {
-    std::vector<Client>::const_iterator it = users.begin(); // get the first element
-    while (it != users.end()) {
-        // check if the client is in the channel
-        if (it->getFd() == fd) {
+    std::vector<int>::const_iterator it = clients.begin();
+    while (it != clients.end()) {
+        if (*it == fd) {
             return true;
         }
         it++;
@@ -262,7 +251,7 @@ bool    Channel::hasClient(int fd) const {
     return false;
 }
 
-void    Channel::broadcastMessage(const std::string& message) {
+void    Channel::broadcastMessage(std::string message) {
     for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
         // send the message to all clients in the channel
         server->sendMessageToClient(*it, message);
@@ -295,3 +284,15 @@ std::string Channel::getModes() const {
     }
     return modes;
 }
+
+void    Channel::removeClient(int fd) {
+    std::vector<int>::iterator it = clients.begin();
+    while (it != clients.end()) {
+        if (*it == fd) {
+            // remove the client from the channel
+            clients.erase(it);
+            break;
+        }
+        it++;
+    }
+}   
