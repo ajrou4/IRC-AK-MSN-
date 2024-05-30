@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 19:04:19 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:27:13 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,15 @@ void    Client::newMessage(const std::string &message) {
 
 void    Client::appendToInboundBuffer(std::string data) { // data is comming from a client
     inboundBuffer << data;
+}
+
+std::string Client::getOutboundBuffer() {
+    return outboundBuffer.str();
+}
+
+void    Client::advOutboundBuffer(size_t n) {
+    std::string data = outboundBuffer.str(); // read the data from the buffer
+    outboundBuffer.str(data.substr(n)); // remove the data from the buffer
 }
 
 bool    Client::inboundReady() const {

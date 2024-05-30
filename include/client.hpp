@@ -6,8 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 19:04:05 by haguezou         ###   ########.fr       */
-/*                                                                            */
+/*   Updated: 2024/05/30 00:25:47 by omakran          ###   ########.fr       */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
@@ -60,11 +59,13 @@ public:
     void                        handleJoin(const std::string& channel);
     void                        handlePrivmsg(const std::string& target, const std::string& message);
 
-    std::string                 getNick() const;
-    std::string                 getUserName() const; // return the client's username.
-    int                         getFd() const; // return the client's file descriptor.
-    std::string                 getRealName() const;
-    std::string                 getHostname() const;
+    std::string                 getNick(void) const;
+    std::string                 getUserName(void) const; // return the client's username.
+    int                         getFd(void) const; // return the client's file descriptor.
+    std::string                 getRealName(void) const;
+    std::string                 getHostname(void) const;
+    std::string                 getOutboundBuffer(void);
+    void                        advOutboundBuffer(size_t n);
     void                        setRealName(std::string realName);
     void                        setUserName(std::string userName);
     void                        setNick(const std::string& nick);

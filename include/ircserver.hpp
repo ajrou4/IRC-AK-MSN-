@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 15:53:20 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/29 22:20:28 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,14 @@ public:
     struct pollfd&  getPollfd(int fd);
     Client&         getClient(int fd); // return the client object associated with the file descriptor.
     Client&         getClientByNick(const std::string& nick); // return the client object associated with the nickname.
+    Channel&        getChannel(std::string& channel); // return the channel object associated with the channel name.
     void            sendMessageToClient(int client_fd, const std::string &message);
     void            commandsProcess(std::vector<std::string> cmds, int fd_client);
     void            sendMessageCommand(int socket, const std::string& message); // send a message to a client.
     void            sendMessageToClientChannels(int client_fd, const std::string &message);
 
     std::vector<Channel*>   getChannels(int client_fd);
+    void                    createChannel(std::string channel_name, std::string password, std::string topic = "");
 
     //              register a new client.
     void            registerNewClient(int socket);

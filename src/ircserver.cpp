@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/29 17:55:26 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:37:00 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void    Server::initializeServer() {
     }
 
     // listen for incoming connections
-    if (listen(server_fd, 10) == -1) {
+    if (listen(server_fd, SOMAXCONN) == -1) {
         std::cerr << "Listen error: " << strerror(errno) << std::endl;
         close(server_fd);
         exit(EXIT_FAILURE);
@@ -86,8 +86,10 @@ void    Server::initializeServer() {
     // add the server socket to the polling list
     struct pollfd server_pollfd;
     server_pollfd.fd = server_fd;
-    server_pollfd.events = POLLIN;
+    server_pollfd.events = POLLIN | POLLERR | POLLHUP; // events to monitor: POLLIN: there's data to read, POLLERR: there's an error, POLLHUP: the client disconnected
     fds.push_back(server_pollfd);
+
+    std::cout << "Server started on 0.0.0.0 :" << port << std::endl;
 }
 
 // main loop of the server:
@@ -124,7 +126,17 @@ void    Server::WriteMsgToClient(int socket)  {
     // if thre's no data to send, return
     if (!client.outBoundReady())
         return;
-    
+    std::string message = client.getOutboundBuffer(); // get the message to send
+    ssize_t bytes_sent; // number of bytes sent
+    if ((bytes_sent = send(socket, message.c_str(), message.size(), 0)) <= 0) {
+        std::cerr << "Send error: " << strerror(errno) << std::endl;
+        return;
+    }
+    client.advOutboundBuffer(bytes_sent);
+    if (!client.outBoundReady()) {
+        struct pollfd &client_pollfd = getPollfd(socket);
+        client_pollfd.events &= ~POLLOUT; // mark the client as not ready for writing
+    }
 }
 
 // accept a new client connection:
@@ -160,13 +172,12 @@ void    Server::handleNewConnection() {
 // handle a message from a client:
 void    Server::handleClientMessage(int client_fd) {
     char    buffer[4096]; // buffer to reading data.
-    // read data from the client.
-    int     bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
-    if (bytes_read == -1) {
+    int     bytes_read;
+    Client& client = getClient(client_fd);
+    if ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) <= 0) {
         std::cerr << "Recv error: " << strerror(errno) << std::endl;
         return;
     }
-    Client& client = getClient(client_fd);
     client.appendToInboundBuffer(std::string(buffer, bytes_read)); // append the data to the client's inbound buffer.
     if (client.inboundReady()) {
         std::vector<std::string> commands = client.splitCommands();
@@ -231,9 +242,9 @@ void    Server::sendMessageToClient(int client_fd, const std::string& message) {
 
 void    Server::sendMessageToClientChannels(int client_fd, const std::string &message) {
     //Client& client = getClient(client_fd); // retrieve the client object associated with client_fd
-    std::vector<Channel*> channels = getChannels(client_fd); // get the channels the client is in
+    std::vector<Channel*> channels = getChannels(client_fd);
     for (size_t i = 0; i < channels.size(); i++) {
-        channels[i]->broadcastMessage(message, client_fd); // broadcast the message to the channel
+        channels[i]->brodcastMessage(message, client_fd); // broadcast the message to the channel
     }
 }
 
@@ -258,6 +269,34 @@ Client  &Server::getClientByNick(const std::string& nick) {
         throw std::runtime_error("Client not found for nick: " + nick);
     }
     return *it->second; // return the client object.
+}
+
+Channel &Server::getChannel(std::string& channel) {
+    if (channel[0] == '#')
+        channel = channel.substr(1); // remove the '#' character
+    for (size_t i = 0; i < channel.size(); i++) {
+        channel[i] = std::tolower(channel[i]);
+        }
+        std::map<std::string, Channel*>::iterator it = channels.find(channel); // find the channel object associated with the channel name.
+        if (it == channels.end()) {
+            throw std::runtime_error("Channel not found: " + channel);
+            }
+        return *it->second; // return the channel object.
+}
+
+void    Server::createChannel(std::string channel_name, std::string password, std::string topic) {
+    std::string val = channel_name;
+    if (channel_name[0] == '#')
+        val = val.substr(1); // remove the '#' character
+    for (size_t i = 0; i < val.size(); i++) {
+        val[i] = std::tolower(val[i]);
+    }
+    if (channels.find(val) != channels.end()) {
+        throw std::runtime_error("Channel already exists: " + channel_name);
+    }
+    Channel* channel = new Channel(channel_name, password, this); // create a new channel object to store the channel information.
+    channel->setTopic(topic); // set the channel topic
+    channels.insert(std::make_pair(val, channel)); // add the channel to the map of channels.
 }
 
 void    Server::cleanUp() {
