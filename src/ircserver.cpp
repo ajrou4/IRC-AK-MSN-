@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 00:37:00 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/30 10:43:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,9 +174,12 @@ void    Server::handleClientMessage(int client_fd) {
     char    buffer[4096]; // buffer to reading data.
     int     bytes_read;
     Client& client = getClient(client_fd);
-    if ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) <= 0) {
-        std::cerr << "Recv error: " << strerror(errno) << std::endl;
+    if ((bytes_read = recv(client_fd, buffer, sizeof(buffer) - 1, 0)) == -1) {
         return;
+    }
+    else
+    {
+        buffer[bytes_read] = '\0'; // null terminate the buffer.
     }
     client.appendToInboundBuffer(std::string(buffer, bytes_read)); // append the data to the client's inbound buffer.
     if (client.inboundReady()) {
