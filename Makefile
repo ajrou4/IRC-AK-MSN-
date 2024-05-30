@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+         #
+#    By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/18 18:37:28 by omakran           #+#    #+#              #
-#    Updated: 2024/05/29 23:32:55 by omakran          ###   ########.fr        #
+#    Updated: 2024/05/30 10:43:57 by haguezou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ SRC = src/main.cpp src/ircserver.cpp src/client.cpp src/ircImplementation.cpp sr
 
 # SRC = src/main.cpp src/ircserver.cpp #$(wildcard src/*.cpp)
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98 
+
+#-fsanitize=address
 
 CXX = c++
 
