@@ -6,7 +6,7 @@
 /*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/30 17:11:23 by majrou           ###   ########.fr       */
+/*   Updated: 2024/05/31 00:38:56 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void Channel::setMode(std::string &mode){
     else if(mode == "-l")
         userLimit = 0;
     else if (mode == "o")
+        
         // take channel operator privilege
         std::cout << "Operator mode"<<std::endl;
     else if(mode == "-o")
@@ -194,7 +195,7 @@ std::string const &Channel::getName()const{
 }
 
 const std::vector<int>  &Channel::getUsers()const{
-    return this->clients;
+    return clients;
 }
 
 // void Channel::removeUser(Client &client){
@@ -254,7 +255,7 @@ bool    Channel::hasClient(int fd) const {
 void    Channel::broadcastMessage(std::string message) {
     for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
         // send the message to all clients in the channel
-        server->sendMessageToClient(*it, message);
+        server->sendMessageCommand(*it, message);
     }
 }
 
@@ -262,7 +263,7 @@ void    Channel::brodcastMessage(std::string message, int fd) {
     for (std::vector<int>::iterator it = clients.begin(); it != clients.end(); it++) {
         // send the message to all clients in the channel except the sender
         if (*it != fd) {
-            server->sendMessageToClient(*it, message);
+            server->sendMessageCommand(*it, message);
         }
     }
 }
@@ -283,4 +284,30 @@ std::string Channel::getModes() const {
         modes += "s";
     }
     return modes;
+}
+
+void    Channel::removeClient(int fd) {
+    std::vector<int>::iterator it = clients.begin();
+    while (it != clients.end()) {
+        if (*it == fd) {
+            // remove the client from the channel
+            clients.erase(it);
+            break;
+        }
+        it++;
+    }
+}
+
+void    helperOperator(Channel &channel, Client &client, Server &server) {
+    int fd = client.getFd();
+    if (channel.isOperator(fd) && channel.getUsers().size() == 1) {
+        std::vector<int> users = channel.getUsers();
+        for (size_t i = 0; i < users.size(); i++) {
+            if (users[i] != fd) {
+                channel.addOperator(users[i]);
+                channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " MODE " + channel.getName() + " +o " + server.getClient(users[i]).getNick());
+                break;
+            }
+        }
+    }
 }
