@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/31 20:22:50 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/01 00:02:51 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();
     InithandleComands();
+
+    time_t now = time(0);
+    char* dt = ctime(&now);
+    creationTime = std::string(dt);
+    creationTime.erase(creationTime.end() - 1); // remove the newline character
 }
 
 Server::~Server() {
@@ -227,7 +232,7 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
         else if (command_name == "QUIT")
             QUIT(fd_client, command_params);
         else {
-            (this->*commands[command_name])(fd_client, command_params); // call the command handler
+            (this->*commands[command_name])(fd_client, command_params); // means that the command is found, so call the command handler.
         }
         it++;
     }

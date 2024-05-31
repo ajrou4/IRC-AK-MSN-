@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 21:20:34 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/31 23:11:08 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 class Client;
 class Channel;
 class Server {
+    //
+    std::string                             creationTime;
     //                                      port number for the server
     int                                     port;
     //                                      connection password

@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/31 18:07:03 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/31 19:16:08 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ void    Client::advOutboundBuffer(size_t n) {
 }
 
 bool    Client::inboundReady() const {
-    std::cout << "1->>>> Inbound buffer " << std::endl;
     return inboundBuffer.str().find("\r\n") != std::string::npos;
 }
 
@@ -144,12 +143,10 @@ void    Client::setNick(const std::string& nick) {
 }
 
 std::vector<std::string> Client::splitCommands() {
-    std::cout << "2->>>> SplitCommands " << std::endl;
     std::vector<std::string>    result;
     std::string                 line = inboundBuffer.str();  // read a line from the buffer
     size_t                      pos; // find the end of the line
     while ((pos = line.find("\r\n")) != std::string::npos) {
-        std::cout << "here " << std::endl;
         std::string command = line.substr(0, pos); // extract the command
         if (command.size() > 0) {
             result.push_back(line.substr(0, pos));
