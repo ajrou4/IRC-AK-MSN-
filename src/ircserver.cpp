@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 21:05:36 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/31 17:56:41 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,9 +207,10 @@ struct pollfd& Server::getPollfd(int fd) {
 }
 
 void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
+    std::cout << "3 --->>> commandsProcess" << std::endl;
     Client& client = getClient(fd_client);
     std::vector<std::string>::iterator it = cmds.begin();
-    while (it != cmds.end()) {
+    while (it < cmds.end()) {
         std::cout << "<<<<< Recieved from socket: " << fd_client << ": " << *it << std::endl;
         std::string command_name;
         std::string command_params;
