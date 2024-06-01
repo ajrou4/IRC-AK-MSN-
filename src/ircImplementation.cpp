@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 17:17:26 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/01 19:25:24 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,8 +231,23 @@ void    Server::WHO(int socket, std::string who) {
 }
 
 void    Server::WHOIS(int socket, std::string whois) {
-
-    
+    Client& client = getClient(socket);
+    std::stringstream ss(whois);
+    std::string mask;
+    ss >> mask;
+    if (mask.empty()) {
+        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
+        return;
+    }
+    try {
+        Client &target = getClientByNick(mask);
+        std::stringstream msg;
+        msg << ":ircserver 311 " << client.getNick() << " " << target.getNick() << " " << target.getUserName() << " " << target.getHostname() << " * :" << target.getRealName();
+        sendMessageCommand(socket, msg.str());
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + mask + " :No such nick/channel"); // send an error message if the channel does not exist
+    }
 }
 
 void    Server::PING(int socket, std::string ping) {
