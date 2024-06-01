@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 16:03:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/01 17:17:26 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,39 +203,36 @@ void    Server::PART(int socket, std::string part) {
 }
 
 void    Server::WHO(int socket, std::string who) {
-    static_cast<void>(socket);
-    static_cast<void>(who);
-    // Client& client = getClient(socket);
-    // std::string channelName = who.substr(who.find(' ') + 1);
-    
-    // std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    // if (it != channels.end()) {
-    //     Channel& channel = it->second;
-    //     std::vector<Client> users = channel.getUsers();
-    //     for (std::vector<Client>::iterator It = users.begin(); It != users.end(); ++It) {
-    //         Client& user = *It;
-    //         sendMessageCommand(socket, ":server.name 352 " + client.getNick() + " " + channelName + " " + user.getUserName() + " " + " server.name " + user.getNick() + " H :0 " + user.getRealName());
-    //     }
-    //     sendMessageCommand(socket, ":server.name 315 " + client.getNick() + " " + channelName + " :End of WHO list");
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + channelName + " :No such channel");
-    // }
+    Client& client = getClient(socket);
+    std::stringstream ss(who);
+    std::string mask;
+    ss >> mask;
+    if (mask.empty()) {
+        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
+        return;
+    }
+    try {
+        Channel& channel = getChannel(mask);
+        const std::vector<int>& users = channel.getUsers();
+        for (size_t i = 0; i < users.size(); i++) {
+            Client& user = getClient(users[i]);
+            std::string mode = "H"; // set the mode to H for all users
+            if (channel.isOperator(user.getFd()))
+                mode += "@"; // add @ for operators
+            std::stringstream msg; // create a stringstream to store the message
+            msg << ":ircserver 352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mode << " " << ":0 " << user.getRealName();
+            sendMessageCommand(socket, msg.str());   
+        }
+        sendMessageCommand(socket, ":ircserver 315 " + client.getNick() + " " + mask + " :End of /WHO list");
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + mask + " :No such channel"); // send an error message if the channel does not exist
+    }
 }
 
 void    Server::WHOIS(int socket, std::string whois) {
-    static_cast<void>(socket);
-    static_cast<void>(whois);
-    // Client& client = getClient(socket);
-    // std::string nick = whois.substr(whois.find(' ') + 1);
+
     
-    // Client* targetClient = getClientByNick(nick);
-    // if (targetClient) {
-    //     sendMessageCommand(socket, ":server.name 311 " + client.getNick() + " " + targetClient->getNick() + " " + targetClient->getUserName() + " " + " * :" + targetClient->getRealName());
-    //     // Add more WHOIS information as necessary
-    //     sendMessageCommand(socket, ":server.name 318 " + client.getNick() + " " + targetClient->getNick() + " :End of WHOIS list");
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 401 " + client.getNick() + " " + nick + " :No such nick");
-    // }
 }
 
 void    Server::PING(int socket, std::string ping) {
