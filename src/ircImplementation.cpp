@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 19:25:24 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/01 19:54:47 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,37 +256,7 @@ void    Server::PING(int socket, std::string ping) {
 }
 
 void    Server::PRIVMSG(int socket, std::string privmsg) {
-    static_cast<void>(socket);
-    static_cast<void>(privmsg);
-    // Client& client = getClient(socket);
-    // size_t pos = privmsg.find(' ');
-    // std::string target = privmsg.substr(0, pos);
-    // std::string message = privmsg.substr(pos + 1);
     
-    // if (target[0] == '#') {
-    //     // Message to a channel
-    //     std::map<std::string, Channel>::iterator it = channels.find(target);
-    //     if (it != channels.end()) {
-    //         Channel& channel = it->second;
-    //         std::vector<Client> users = channel.getUsers();
-    //         for (std::vector<Client>::iterator It = users.begin(); It != users.end(); ++It) {
-    //             Client &user = *It;
-    //             if (user.getFd() != socket) {
-    //                 sendMessageCommand(user.getFd(), ":" + client.getNick() + " PRIVMSG " + target + " :" + message);
-    //             }
-    //         }
-    //     } else {
-    //         sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + target + " :No such channel");
-    //     }
-    // } else {
-    //     // Message to a user
-    //     Client* targetClient = getClientByNick(target);
-    //     if (targetClient) {
-    //         sendMessageCommand(targetClient->getFd(), ":" + client.getNick() + " PRIVMSG " + target + " :" + message);
-    //     } else {
-    //         sendMessageCommand(socket, ":server.name 401 " + client.getNick() + " " + target + " :No such nick");
-    //     }
-    // }
 }
 
 void    Server::QUIT(int socket, std::string quit) {
