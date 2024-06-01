@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/31 19:23:31 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/01 12:41:39 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,9 @@ void    Server::handleEvents() {
     {
         if (fds[i].revents & (POLLERR | POLLHUP)) // if there's an error or the client disconnected
             QUIT(fds[i].fd, "Client disconnected");
-        else if (fds[i].revents | POLLIN) // if there's data to read
+        else if (fds[i].revents & POLLIN) // if there's data to read
             handleClientMessage(fds[i].fd);
-        else if (fds[i].revents | POLLOUT)  // if there's data to write
+        else if (fds[i].revents & POLLOUT) // if there's data to write
             WriteMsgToClient(fds[i].fd);
     }
 }
@@ -223,15 +223,15 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
         ss >> command_name >> std::ws;  // extract the command name
         std::transform(command_name.begin(), command_name.end(), command_name.begin(), ::toupper); // convert the command name to uppercase
         std::getline(ss, command_params, '\0'); // extract the command parameters
-        if (command_name != "PASS" && !client.isAuthenticated()) { // if the client is not authenticated
-            sendMessageCommand(fd_client, ":irc 451 :You have not registered");
-        } else if (command_name != "PASS" && command_name != "NICK" && command_name != "USER" && !client.isRegistered()) {
-            sendMessageCommand(fd_client, ":irc 451 :You have not registered");
-        } else if (commands.find(command_name) == commands.end()) {
+        if (command_name != "PASS" && !client.isAuthenticated()) // if the client is not authenticated
+            sendMessageCommand(fd_client, ":irc 451 : You have not registered");
+        else if (command_name != "PASS" && command_name != "NICK" && command_name != "USER" && !client.isRegistered()) // if the client is not registered
+            sendMessageCommand(fd_client, ":irc 451 : You have not registered");
+        else if (commands.find(command_name) == commands.end()) // if the command is not found
             sendMessageCommand(fd_client, ":irc 421 " + command_name + " : Unknown command");
-        } else if (command_name == "QUIT") {
+        else if (command_name == "QUIT")
             QUIT(fd_client, command_params);
-        } else {
+        else {
             (this->*commands[command_name])(fd_client, command_params); // call the command handler
         }
         it++;

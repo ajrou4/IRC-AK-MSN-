@@ -144,7 +144,6 @@ void    Client::setNick(const std::string& nick) {
 }
 
 std::vector<std::string> Client::splitCommands() {
-    std::cout << "2->>>> SplitCommands " << std::endl;
     std::vector<std::string>    result;
     std::string                 line = inboundBuffer.str();  // read a line from the buffer
     size_t                      pos; // find the end of the line

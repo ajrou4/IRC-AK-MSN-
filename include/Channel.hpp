@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/31 15:28:01 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/01 13:04:29 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ class Channel
         int                         userLimit;
         bool                        inviteOnly;
         std::vector<std::string >   inviteUser2;
-        // std::vector<Client>         users;
-        std::vector<Client>         oper;
+        // std::vector<Client *>         users;
+        std::vector<Client*>         oper;
         int                         mode;
         std::vector<int>            clients;
         std::vector<int>            invites;
