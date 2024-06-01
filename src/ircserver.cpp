@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 12:41:39 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/01 18:28:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();
     InithandleComands();
+
+    time_t now = time(0);
+    char* dt = ctime(&now);
+    creationTime = std::string(dt);
+    creationTime.erase(creationTime.end() - 1); // remove the newline character
 }
 
 Server::~Server() {
@@ -224,15 +229,15 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
         std::transform(command_name.begin(), command_name.end(), command_name.begin(), ::toupper); // convert the command name to uppercase
         std::getline(ss, command_params, '\0'); // extract the command parameters
         if (command_name != "PASS" && !client.isAuthenticated()) // if the client is not authenticated
-            sendMessageCommand(fd_client, ":irc 451 : You have not registered");
+            sendMessageCommand(fd_client, ":ircserver 451 : You have not registered");
         else if (command_name != "PASS" && command_name != "NICK" && command_name != "USER" && !client.isRegistered()) // if the client is not registered
-            sendMessageCommand(fd_client, ":irc 451 : You have not registered");
+            sendMessageCommand(fd_client, ":ircserver 451 : You have not registered");
         else if (commands.find(command_name) == commands.end()) // if the command is not found
-            sendMessageCommand(fd_client, ":irc 421 " + command_name + " : Unknown command");
+            sendMessageCommand(fd_client, ":ircserver 421 " + command_name + " : Unknown command");
         else if (command_name == "QUIT")
             QUIT(fd_client, command_params);
         else {
-            (this->*commands[command_name])(fd_client, command_params); // call the command handler
+            (this->*commands[command_name])(fd_client, command_params); // means that the command is found, so call the command handler.
         }
         it++;
     }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 22:08:34 by majrou           ###   ########.fr       */
+/*   Updated: 2024/06/01 15:31:53 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@
 class Client;
 class Channel;
 class Server {
+    //
+    std::string                             creationTime;
     //                                      port number for the server
     int                                     port;
     //                                      connection password

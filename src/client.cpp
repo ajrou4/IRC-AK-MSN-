@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/20 00:45:48 by haguezou           #+#    #+#             */
-/*   Updated: 2024/05/31 18:12:51 by haguezou         ###   ########.fr       */
+/*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
+/*   Updated: 2024/06/01 18:27:53 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ void    Client::advOutboundBuffer(size_t n) {
 }
 
 bool    Client::inboundReady() const {
-    std::cout << "1->>>> Inbound buffer " << std::endl;
     return inboundBuffer.str().find("\r\n") != std::string::npos;
 }
 
@@ -148,7 +147,6 @@ std::vector<std::string> Client::splitCommands() {
     std::string                 line = inboundBuffer.str();  // read a line from the buffer
     size_t                      pos; // find the end of the line
     while ((pos = line.find("\r\n")) != std::string::npos) {
-        std::cout << "here " << std::endl;
         std::string command = line.substr(0, pos); // extract the command
         if (command.size() > 0) {
             result.push_back(line.substr(0, pos));
