@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 20:20:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/02 00:22:06 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,39 @@ void    Server::PING(int socket, std::string ping) {
 }
 
 void    Server::PRIVMSG(int socket, std::string privmsg) {
-    
+    Client& client = getClient(socket);
+    std::string target, message;
+    std::istringstream iss(privmsg);
+    iss >> target >> std::ws; // get the target and get rid of the leading whitespace
+    std::getline(iss, message, '\0'); // get the message
+    if (target.empty()) {
+        sendMessageCommand(socket, ":ircserver 411 " + client.getNick() + " :No recipient given");
+        return;
+    }
+    if (message.empty()) {
+        sendMessageCommand(socket, ":ircserver 412 " + client.getNick() + " :No text to send");
+        return;
+    }
+    try {
+        if (target[0] == '#') { // if the target is a channel
+            Channel& channel = getChannel(target);
+            if (!channel.hasClient(socket)) { // if the client is not in the channel
+                sendMessageCommand(socket, ":ircserver 442 " + client.getNick() + " " + target + " :You're not on that channel");
+                return;
+            }
+            if (channel.getMode(Moderated) && !channel.isOperator(socket) && !channel.hasPlusV(socket)) { // if the channel is moderated and the client is not an operator or voiced
+                sendMessageCommand(socket, ":ircserver 404 " + client.getNick() + " " + target + " :Cannot send to channel");
+                return;
+            }
+            channel.brodcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message, socket);
+        } else {
+            Client& targetClient = getClientByNick(target);
+            sendMessageCommand(targetClient.getFd(), ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message);
+        }
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + target + " :No such nick/channel");
+    }
 }
 
 void    Server::QUIT(int socket, std::string quit) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/31 00:38:31 by majrou           ###   ########.fr       */
+/*   Updated: 2024/06/02 00:18:26 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ class Channel
             void                    broadcastMessage(std::string message); // send a message to all clients in the channel.
             void                    brodcastMessage(std::string message, int fd); // send a message to all clients in the channel except the sender.
             void                    removeClient(int fd); // remove a client from the channel.
+            bool                    hasPlusV(int fd);
 };
 
 void    helperOperator(Channel &channel, Client &client, Server &server);
