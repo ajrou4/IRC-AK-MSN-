@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/30 20:55:05 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/31 00:38:56 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void Channel::setMode(std::string &mode){
     else if(mode == "-l")
         userLimit = 0;
     else if (mode == "o")
+        
         // take channel operator privilege
         std::cout << "Operator mode"<<std::endl;
     else if(mode == "-o")
@@ -194,7 +195,7 @@ std::string const &Channel::getName()const{
 }
 
 const std::vector<int>  &Channel::getUsers()const{
-    return this->clients;
+    return clients;
 }
 
 // void Channel::removeUser(Client &client){

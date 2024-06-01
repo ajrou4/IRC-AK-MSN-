@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/05/30 21:18:17 by omakran          ###   ########.fr       */
+/*   Updated: 2024/05/31 00:38:31 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ class Channel
         int                         userLimit;
         bool                        inviteOnly;
         std::vector<std::string >   inviteUser2;
-        // std::vector<Client>         users;
-        std::vector<Client>         oper;
+        // std::vector<Client *>         users;
+        std::vector<Client*>         oper;
         int                         mode;
         std::vector<int>            clients;
         std::vector<int>            invites;
