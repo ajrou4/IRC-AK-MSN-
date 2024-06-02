@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:51:02 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/02 02:06:50 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/02 16:35:23 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void    Channel::addClient(int fd) {
 }
 
 void    Channel::removeInv(int fd) {
-    std::vector<int>::iterator it = clients.begin();
+    std::vector<int>::iterator it = invites.begin();
     while (it != invites.end()) {
         if (*it == fd) {
             // remove the client from the channel
