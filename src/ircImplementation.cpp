@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 20:20:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/02 05:05:49 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,39 @@ void    Server::PING(int socket, std::string ping) {
 }
 
 void    Server::PRIVMSG(int socket, std::string privmsg) {
-    
+    Client& client = getClient(socket);
+    std::string target, message;
+    std::istringstream iss(privmsg);
+    iss >> target >> std::ws; // get the target and get rid of the leading whitespace
+    std::getline(iss, message, '\0'); // get the message
+    if (target.empty()) {
+        sendMessageCommand(socket, ":ircserver 411 " + client.getNick() + " :No recipient given");
+        return;
+    }
+    if (message.empty()) {
+        sendMessageCommand(socket, ":ircserver 412 " + client.getNick() + " :No text to send");
+        return;
+    }
+    try {
+        if (target[0] == '#') { // if the target is a channel
+            Channel& channel = getChannel(target);
+            if (!channel.hasClient(socket)) { // if the client is not in the channel
+                sendMessageCommand(socket, ":ircserver 442 " + client.getNick() + " " + target + " :You're not on that channel");
+                return;
+            }
+            if (channel.getMode(Moderated) && !channel.isOperator(socket) && !channel.hasPlusV(socket)) { // if the channel is moderated and the client is not an operator or voiced
+                sendMessageCommand(socket, ":ircserver 404 " + client.getNick() + " " + target + " :Cannot send to channel");
+                return;
+            }
+            channel.brodcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message, socket);
+        } else {
+            Client& targetClient = getClientByNick(target);
+            sendMessageCommand(targetClient.getFd(), ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message);
+        }
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + target + " :No such nick/channel");
+    }
 }
 
 void    Server::QUIT(int socket, std::string quit) {
@@ -266,7 +298,6 @@ void    Server::QUIT(int socket, std::string quit) {
     sendMessageToClientChannels(socket, ss.str());
     removeClient(socket);
 }
-
 
 void    Server::KICK(int socket, std::string kick) {
     static_cast<void>(socket);
@@ -354,21 +385,113 @@ void    Server::ISON(int socket, std::string ison) {
 }
 
 void    Server::MODE(int socket, std::string mode){
-    static_cast<void>(socket);
-    static_cast<void>(mode);
-    // Client& client = getClient(socket);
-    // std::istringstream iss(mode);
-    // std::string channelName, modeString;
-    // iss >> channelName >> modeString;
-    // std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    // if (it != channels.end()) {
-    //     Channel& channel = it->second;
-    //     if (modeString.empty()) {
-    //         sendMessageCommand(socket, ":server.name 324 " + client.getNick() + " " + channelName + " +" + channel.getMode());
-    //     } else {
-    //         sendMessageCommand(socket, ":server.name 472 " + client.getNick() + " " + channelName + " :is unknown mode char to me");
-    //     }
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + channelName + " :No such channel");
-    // }
+    Client& client = getClient(socket);
+    Channel *channel;
+
+    std::string target, modeStr, modeParams;
+    std::istringstream iss(mode); // create a stringstream from the message
+    iss >> target >> modeStr >> modeParams; // get the target, mode, and mode parameters
+    if (target.empty()) {
+        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+        return;
+    }
+    try {
+        channel = &getChannel(target); // try to get the channel
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + target + " :No such channel"); // send an error message if the channel does not exist
+        return;
+    }
+    if (mode.empty()) {
+        sendMessageCommand(socket, ":ircserver 324 " + client.getNick() + " " + target + " " + channel->getModes());
+        return;
+    }
+    if (!channel->isOperator(socket) || !channel->hasClient(socket)) { // if the client is not an operator or not in the channel
+        sendMessageCommand(socket, ":ircserver 482 " + client.getNick() + " :You're not a channel operator");
+        return;
+    }
+    bool addMode = true;
+    if (modeStr[0] == '+') {
+        addMode = true; // set addMode to true if the mode is a plus
+        modeStr = modeStr.substr(1); // remove the plus
+    }
+    if (modeStr.length() != 1) { // if the mode is not a single character
+        sendMessageCommand(socket, ":ircserver 472 " + client.getNick() + " " + modeStr + " :is unknown mode char to me");
+        return;
+    }
+    switch (modeStr[0]) {
+        case 'o': // means give/take channel operator privileges
+            if (modeParams.empty()) {
+                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                return;
+            }
+            try {
+                Client& targetClient = getClientByNick(modeParams);
+                if (addMode) { // if the mode is a plus
+                    channel->addOperator(targetClient.getFd()); // add the client as an operator
+                } else {
+                    channel->removeOperator(targetClient.getFd()); // remove the client as an operator
+                }
+            }
+            catch (std::runtime_error& e) {
+                sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
+            }
+            break;
+        case 'v': // means give/take the voice privilege
+            if (modeParams.empty()) {
+                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                return;
+            }
+            try {
+                Client& targetClient = getClientByNick(modeParams);
+                if (addMode) { // if the mode is a plus
+                    channel->addPlusV(targetClient.getFd()); // add the client as a voiced user
+                } else {
+                    channel->removePlusV(targetClient.getFd()); // remove the client as a voiced user
+                }
+            }
+            catch (std::runtime_error& e) {
+                sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
+            }
+            break;
+        case 'k': // means set the channel key
+            if (modeParams.empty()) {
+                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                return;
+            }
+            channel->setMode(Key, addMode);
+            if (addMode) {
+                channel->setPassword(modeParams);
+            } else {
+                channel->setPassword("");
+            }
+            break;
+        case 'l': // means set the user limit
+            if (modeParams.empty() && addMode) {
+                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                return;
+            }
+            if (addMode) {
+                channel->setUserLimit(std::stoi(modeParams)); // stoi converts the string to an integer
+            } else {
+                channel->setUserLimit(0); // set the user limit to 0
+            }
+            break;
+        case 'i': // means set the invite-only mode
+            channel->setMode(invit_ONLY, addMode);
+            break;
+        case 'm': // means set the moderated mode
+            channel->setMode(Moderated, addMode);
+            break;
+        case 's': // means set the secret mode
+            channel->setMode(Secret, addMode);
+            break;
+        case 't': // means set the topic protection mode
+            channel->setMode(ToPic, addMode);
+            break;
+        default:
+            sendMessageCommand(socket, ":ircserver 472 " + client.getNick() + " " + modeStr + " :is unknown mode char to me");
+            break;
+    }
+    channel->broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " MODE " + channel->getName() + " "  );
 }

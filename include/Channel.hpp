@@ -6,11 +6,10 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/01 13:04:29 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/02 09:27:14 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
 # include <iostream>
@@ -53,13 +52,13 @@ class Channel
         int                         userLimit;
         bool                        inviteOnly;
         std::vector<std::string >   inviteUser2;
-        // std::vector<Client *>         users;
         std::vector<Client*>         oper;
         int                         mode;
         std::vector<int>            clients;
         std::vector<int>            invites;
         std::vector<int>            operators;
         Server                      *server; // for server
+        std::vector<int>            plusVoices;
 
     public:
             Channel();
@@ -75,8 +74,8 @@ class Channel
             std::string const       &getName()const;
             //                      should be declare setName() to change the name of the channel
             const std::string       getPassword() const;
-            //                      should be declare setPassword() to change the password of the channel
-            void                    setMode(std::string &mode);
+            void                    setPassword(const std::string password);
+            void                    setMode(ChannelMode KEY, bool value);
             bool                    getMode(ChannelMode KEY)const;
             
             //                      void kickUser(const std::string &userName);
@@ -95,6 +94,11 @@ class Channel
             void                    broadcastMessage(std::string message); // send a message to all clients in the channel.
             void                    brodcastMessage(std::string message, int fd); // send a message to all clients in the channel except the sender.
             void                    removeClient(int fd); // remove a client from the channel.
+            void                    removeOperator(int fd); // remove a client from the operator list.
+            bool                    hasPlusV(int fd);
+            void                    addPlusV(int fd);
+            void                    removePlusV(int fd);
+            void                    setUserLimit(int limit);
 };
 
 void    helperOperator(Channel &channel, Client &client, Server &server);
