@@ -6,13 +6,12 @@
 /*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/02 14:35:44 by majrou           ###   ########.fr       */
+/*   Updated: 2024/06/02 15:51:01 by majrou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
-# define CHANNEL_HPP
-
+#define  CHANNEL_HPP
 
 # include <iostream>
 # include <vector> 
