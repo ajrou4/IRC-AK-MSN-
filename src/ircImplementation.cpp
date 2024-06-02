@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/02 05:05:49 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/02 16:55:06 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,7 @@ void    Server::PRIVMSG(int socket, std::string privmsg) {
                 sendMessageCommand(socket, ":ircserver 404 " + client.getNick() + " " + target + " :Cannot send to channel");
                 return;
             }
-            channel.brodcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message, socket);
+            channel.brodcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + "#" + target + " :" + message, socket);
         } else {
             Client& targetClient = getClientByNick(target);
             sendMessageCommand(targetClient.getFd(), ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message);
