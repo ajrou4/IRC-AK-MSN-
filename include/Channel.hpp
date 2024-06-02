@@ -3,27 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/02 02:05:57 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/02 09:27:14 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
 # include <iostream>
-# include <vector> //-> for vector
+# include <vector> 
 # include <algorithm>
-# include <sys/socket.h> //-> for socket()
-# include <sys/types.h> //-> for socket()
-# include <netinet/in.h> //-> for sockaddr_in
-# include <fcntl.h> //-> for fcntl()
-# include <unistd.h> //-> for close()
-# include <arpa/inet.h> //-> for inet_ntoa()
-# include <poll.h> //-> for poll()
-# include <csignal> //-> for signal()
+# include <sys/socket.h> 
+# include <sys/types.h>
+# include <netinet/in.h>
+# include <fcntl.h> 
+# include <unistd.h> 
+# include <arpa/inet.h>
+# include <poll.h>
+# include <csignal>
 # include <string>
 # include <netdb.h>
 # include <cstring>

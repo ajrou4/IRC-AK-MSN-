@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 00:14:14 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/01 18:28:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,11 +185,16 @@ void    Server::handleClientMessage(int client_fd) {
     {
         buffer[bytes_read] = '\0'; // null terminate the buffer.
     }
-
-    client.appendToInboundBuffer(std::string(buffer, bytes_read)); // append the data to the client's inbound buffer.
-    if (client.inboundReady()) {
+    std::string data = std::string(buffer, bytes_read); // convert the buffer to a string.
+    client.appendToInboundBuffer(data); // append the data to the client's inbound buffer.
+    if (client.inboundReady()) 
+    {
         std::vector<std::string> commands = client.splitCommands();
         commandsProcess(commands, client_fd); // process the commands.
+    }
+    else{
+        std::cout << ">>>>> inboundReady is faild : no command detected !" << std::endl;
+        exit(EXIT_FAILURE);
     }
 }
 

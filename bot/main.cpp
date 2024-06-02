@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:48:06 by codespace         #+#    #+#             */
-/*   Updated: 2024/05/22 18:29:50 by codespace        ###   ########.fr       */
+/*   Updated: 2024/06/01 19:06:59 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int main()
 {
     Bot bot;
-    bot.stratSocket();
-    return 0;    
+
+    bot.run();
+    return 0;
 }
