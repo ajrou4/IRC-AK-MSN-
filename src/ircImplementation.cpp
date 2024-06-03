@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/03 19:15:31 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/03 19:58:03 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,45 +38,3 @@ void    Server::sendMessageCommand(int socket, const std::string& message){
     std::cout << BOLDGREEN << ">>>>> Sending into socket " << socket << ": " << message << RESET << std::endl;
     getPollfd(socket).events |= POLLOUT; // set the POLLOUT event for the socket
 }
-
-// pass was here =====> src/commands/irc_pass.cpp
-
-// nick was here =====> src/commands/irc_nick.cpp
-
-// user was here =====> src/commands/irc_user.cpp
-
-
-
-// ping was here =====> src/commands/irc_interaction.cpp
-
-
-// list was here =====> src/commands/irc_channel_cmd.cpp
-
-//join was here =====> src/commands/irc_channel_cmd.cpp
-
-// privmsg was here =====> src/commands/irc_channel.cpp
-
-// part was here =====> src/commands/irc_channel_cmd.cpp
-
-
-
-// quit was here =====> src/commands/irc_interaction.cpp
-
-
-
-// who was here =====> src/commands/irc_user_info.cpp   
-
-// whois was here =====> src/commands/irc_user_info.cpp
-
-
-
-// kick was here =====> src/commands/irc_channel_managment.cpp
-
-// topic was here =====> src/commands/irc_channel_managment.cpp
-
-// invite was here =====> src/commands/irc_channel_managment.cpp
-
-
-// ison was here =====> src/commands/irc_miscellaneous_cmd.cpp
-
-// mode was here =====> src/commands/irc_miscellaneous_cmd.cpp

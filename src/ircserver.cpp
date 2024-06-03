@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/03 19:24:27 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/03 20:00:47 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void    Server::InithandleComands(void) {
 void    Server::initializeServer() {
     struct sockaddr_in  server_addr;
 
+    //          create the server socket
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
         std::cerr << "Socket creation error: " << strerror(errno) << std::endl;
@@ -316,7 +317,7 @@ void    Server::removeClient(int fd) {
     if (it2 != fds.end()) {
         fds.erase(it2); // remove the client from the list of file descriptors to poll.
     }
-    std::cout << BOLDRED << "Client desconnected from the Socket: " << fd << RESET << std::endl;
+    std::cout << BOLDRED << "Client desconnected" << RESET << std::endl;
 }
 
 void    Server::cleanUp() {
