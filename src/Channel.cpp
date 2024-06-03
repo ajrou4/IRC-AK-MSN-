@@ -6,9 +6,7 @@ Channel::Channel() : name(""), password(""), userLimit(0), mode(0), server(NULL)
 Channel::Channel(std::string Name, std::string password, Server *server):
 name(Name), password(password), userLimit(0), mode(0), server(server) {
     if (!password.empty()) {
-        mode |= (1 << Key); // set the password mode
-    } else {
-        mode &= ~(1 << Key); // unset the password mode
+        setMode(Key, true);
     }
     if (name[0] != '#') {
         name = "#" + name;
