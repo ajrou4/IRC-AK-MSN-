@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/03 01:29:17 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/03 21:10:25 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,6 @@ class Channel
             void                    addInv(int fd);
 };
 
-void    helperOperator(Channel &channel, Client &client, Server &server);
+void                                helperOperator(Channel &channel, Client &client, Server &server); // helper function to add operator to the channel.
 
 #endif

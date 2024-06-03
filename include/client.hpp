@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/30 21:13:21 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/03 21:09:35 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,6 @@ class Client {
     bool                        authenticated; 
     bool                        registered;
     std::vector<std::string>    messageQueue;
-
-    // utility function to split the message into command and parameters.
-    // std::vector<std::string>    splitMessage(const std::string& message);
 
 public:
     Client(int fd, std::string ip, std::string hostname);
@@ -88,7 +85,7 @@ public:
 
     void                        setAuthenticated(bool authenticated = true);
     void                        newMessage(const std::string &message);
-    void                        appendToInboundBuffer(std::string data);
+    void                        appendToInboundBuffer(std::string data); // append data to the inbound buffer.
 };
 
 #endif

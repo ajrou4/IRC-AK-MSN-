@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 15:31:53 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/03 21:12:18 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,28 +52,28 @@ class Server {
     std::map<std::string, commandHandler>   commands;
 
     // ------------------- member functions: -----------------------
-
-    //              initialize the serever socket.
-    void            initializeServer();
-    //              handles events returned by poll().
-    void            handleEvents();
-    //              accept a new client connection.
-    void            handleNewConnection();
-    //              handle a message from client
-    void            handleClientMessage(int client_fd);
-    //              write message to a client
-    void            WriteMsgToClient(int socket);
-    //              additional helper functions as needed (oziyada mn ras lhmq hh).
-    void            InithandleComands(void);
         
-    //              close all opne sockets and clean up resources:
-    void            cleanUp();
+    //                      initialize the serever socket.
+    void                    initializeServer();
+    //                      handles events returned by poll().
+    void                    handleEvents();
+    //                      accept a new client connection.
+    void                    handleNewConnection();
+    //                      handle a message from client
+    void                    handleClientMessage(int client_fd);
+    //                      write message to a client
+    void                    WriteMsgToClient(int socket);
+    //                      additional helper functions as needed (oziyada mn ras lhmq hh).
+    void                    InithandleComands(void);
+                
+    //                      close all opne sockets and clean up resources:
+    void                    cleanUp();
 
 public:
     // constructor:
     Server(int port, const std::string& password);
 
-    //              main loop for polling and handling events.
+    //                      main loop for polling and handling events.
     void                    pollLoop();
 
     struct pollfd&          getPollfd(int fd);
@@ -91,7 +91,6 @@ public:
     //                      register a new client.
     void                    registerNewClient(int socket);
     //                      CMDS
-    void            CAP(int socket, std::string cap);// Client Capability Negotiation : https://tools.ietf.org/html/rfc2812#section-3.2.6 // https://ircv3.net/specs/extensions/capability-negotiation.html // https://modern.ircdocs.horse/ircv3.html#cap
     void                    PASS(int socket, std::string pass);
     void                    NICK(int socket, std::string nickname);
     void                    USER(int socket, std::string user);
