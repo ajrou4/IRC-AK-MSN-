@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/01 18:27:53 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/03 01:09:10 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ bool    Client::outBoundReady() const {
 
 std::vector<std::string> Client::splitMessage(const std::string& message) {
     std::vector<std::string>    result; 
-    std::istringstream stream(message); // create a stream from the message
+    std::stringstream stream(message); // create a stream from the message
     std::string                 token;
 
     // split the message by whitespace and store each part in the `result` vector.

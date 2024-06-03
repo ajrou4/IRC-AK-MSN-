@@ -123,6 +123,15 @@ void    Channel::removeInv(int fd) {
     }
 }   
 
+void    Channel::addInv(int fd) {
+    if (!hasClient(fd)) {
+        // add the client to the channel
+        invites.push_back(fd);
+    } else {
+        std::cerr << "Client already in the channel" << std::endl;
+    }
+}
+
 bool    Channel::hasPlusV(int fd) {
     std::vector<int>::iterator it = plusVoices.begin();
     while (it != plusVoices.end()) {

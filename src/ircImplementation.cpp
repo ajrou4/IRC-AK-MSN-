@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/02 16:55:06 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/03 05:27:51 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,14 @@ void    Server::sendMessageCommand(int socket, const std::string& message){
     client.newMessage(message);
     std::cout << ">>>>> Sending into socket " << socket << ": " << message << std::endl;
     getPollfd(socket).events |= POLLOUT; // set the POLLOUT event for the socket
-} 
+}
 
+/* ---------------- PASS command ---------------
+    Used before registering a connection. 
+    If the server requires a password,
+    It must be sent before the NICK/USER commands.
+   ----------------------------------------------- */
+//      sets a password for the connection.
 void    Server::PASS(int socket, std::string pass) {
     Client& client = getClient(socket);
     // Check if the client is already authenticated
@@ -55,6 +61,11 @@ void    Server::PASS(int socket, std::string pass) {
     }
 }
 
+/* ---------------- NICK command -----------------
+    Essential for user registration; 
+    Identifies a user with a unique nickname.
+   ----------------------------------------------- */
+//      sets or changes the nickname of a user.
 void    Server::NICK(int socket, std::string nickname) {
     Client& client = getClient(socket);
     // Check if the nickname is valid
@@ -76,14 +87,20 @@ void    Server::NICK(int socket, std::string nickname) {
     }
 }
 
+/* -------------------- USER command -------------------------
+    Used to specify the username, hostname, servername,
+    and real name of the user.
+    This command, along with NICK, completes the registration.
+   ------------------------------------------------------------ */
+//      sends user information to the server.
 void    Server::USER(int socket, std::string params) {
     Client& client = getClient(socket);
     std::string username, realname, skipChar;
-    std::istringstream iss(params);
-    iss >> username >> std::ws; // get the username and get rid of the leading whitespace
-    std::getline(iss, skipChar, ':'); // get rid of the colon
-    iss >> std::ws; // get rid of the leading whitespace
-    std::getline(iss, realname, '\0');
+    std::stringstream ss(params);
+    ss >> username >> std::ws; // get the username and get rid of the leading whitespace
+    std::getline(ss, skipChar, ':'); // get rid of the colon
+    ss >> std::ws; // get rid of the leading whitespace
+    std::getline(ss, realname, '\0');
     //                                          https://modern.ircdocs.horse/#userlen-parameter
     if (username.size() < 1 || username.size() > 12
         || username.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != std::string::npos
@@ -104,13 +121,49 @@ void    Server::USER(int socket, std::string params) {
     sendMessageToClientChannels(socket, broadcastMessage.str()); // send the message to all the channels the client is in
 }
 
+/* ---------------------------- PING command ------------------------------
+    The server sends a PING message to check if the client is responsive.
+    The client must respond with a PONG message.
+   -----------------------------------------------------------------------*/
+//      checks the connection between the client and the server.
+void    Server::PING(int socket, std::string ping) {
+    std::string server = ping.substr(ping.find(' ') + 1);
+    sendMessageCommand(socket, ":ircserver PONG " + server);
+}
+
+/* ----------------------------  LIST command ------------------------------
+                    Shows channels and their topics.
+   ------------------------------------------------------------------------- */
+//      lists all channels or channels matching a certain pattern
+void    Server::LIST(int socket, std::string) {
+    Client  &client = getClient(socket);
+
+    sendMessageCommand(socket, ":ircserver 321 " + client.getNick() + " Channel : Users Name");
+    std::map<std::string, Channel*>::iterator it = channels.begin();
+    for (; it != channels.end(); ++it) {
+        std::stringstream ss; // create a stringstream to store the message
+        Channel& channel = *it->second; // get the channel
+        if (channel.getMode(Secret)) {
+            continue; // skip secret channels
+        }
+        ss << ":ircserver 322 " << client.getNick() << " " << channel.getName() << " " << channel.getUsers().size() << " : " << channel.getTopic();
+        sendMessageCommand(socket, ss.str());
+    }
+    sendMessageCommand(socket, ":ircserver 323 " + client.getNick() + " : End of /LIST");
+}
+
+/* ----------------------------  JOIN command --------------------------------
+                    The user joins one or more channels,
+                    optionally providing a key if required.
+   ------------------------------------------------------------------------- */
+//      joins a user to a channel.
 void    Server::JOIN(int socket, std::string channelName) {
     Client& client = getClient(socket);
 
     std::string channel_name, channel_key;
-    std::istringstream iss(channelName);
-    iss >> channel_name >> std::ws; // get the channel name and get rid of the leading whitespace
-    iss >> channel_key; // get the channel key
+    std::stringstream ss(channelName);
+    ss >> channel_name >> std::ws; // get the channel name and get rid of the leading whitespace
+    ss >> channel_key; // get the channel key
     if (channel_name.empty()){
         sendMessageCommand(socket, ":ircserver 461  JOIN :Not enough parameters");
         return;
@@ -162,105 +215,17 @@ void    Server::JOIN(int socket, std::string channelName) {
     }
 }
 
-void    Server::LIST(int socket, std::string) {
-    Client  &client = getClient(socket);
-
-    sendMessageCommand(socket, ":ircserver 321 " + client.getNick() + " Channel : Users Name");
-    std::map<std::string, Channel*>::iterator it = channels.begin();
-    for (; it != channels.end(); ++it) {
-        std::stringstream ss; // create a stringstream to store the message
-        Channel& channel = *it->second; // get the channel
-        if (channel.getMode(Secret)) {
-            continue; // skip secret channels
-        }
-        ss << ":ircserver 322 " << client.getNick() << " " << channel.getName() << " " << channel.getUsers().size() << " : " << channel.getTopic();
-        sendMessageCommand(socket, ss.str());
-    }
-    sendMessageCommand(socket, ":ircserver 323 " + client.getNick() + " : End of /LIST");
-}
-
-void    Server::PART(int socket, std::string part) {
-    Client& client = getClient(socket);
-    std::stringstream ss(part); // create a stringstream from the message
-    std::string channelName;
-    ss >> channelName; // get the channel name
-    if (channelName.empty()) {
-        sendMessageCommand(socket, ":ircserver 461 PART : Not enough parameters");
-        return;
-    }
-    try {
-        Channel& channel = getChannel(channelName);
-        if (!channel.hasClient(socket)) {
-            sendMessageCommand(socket, ":ircserver 442 " + channelName + " : You're not on that channel");
-            return;
-        }
-        helperOperator(channel, client, *this); // check if the client is the only operator in the channel
-        channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PART " + part);
-        channel.removeClient(socket);
-    } catch (std::runtime_error& e) {
-        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + channelName + " :No such channel");
-    } 
-}
-
-void    Server::WHO(int socket, std::string who) {
-    Client& client = getClient(socket);
-    std::stringstream ss(who);
-    std::string mask;
-    ss >> mask;
-    if (mask.empty()) {
-        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
-        return;
-    }
-    try {
-        Channel& channel = getChannel(mask);
-        const std::vector<int>& users = channel.getUsers();
-        for (size_t i = 0; i < users.size(); i++) {
-            Client& user = getClient(users[i]);
-            std::string mode = "H"; // set the mode to H for all users
-            if (channel.isOperator(user.getFd()))
-                mode += "@"; // add @ for operators
-            std::stringstream msg; // create a stringstream to store the message
-            msg << ":ircserver 352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mode << " " << ":0 " << user.getRealName();
-            sendMessageCommand(socket, msg.str());   
-        }
-        sendMessageCommand(socket, ":ircserver 315 " + client.getNick() + " " + mask + " :End of /WHO list");
-    }
-    catch (std::runtime_error& e) {
-        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + mask + " :No such channel"); // send an error message if the channel does not exist
-    }
-}
-
-void    Server::WHOIS(int socket, std::string whois) {
-    Client& client = getClient(socket);
-    std::stringstream ss(whois);
-    std::string mask;
-    ss >> mask;
-    if (mask.empty()) {
-        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
-        return;
-    }
-    try {
-        Client &target = getClientByNick(mask);
-        std::stringstream msg;
-        msg << ":ircserver 311 " << client.getNick() << " " << target.getNick() << " " << target.getUserName() << " " << target.getHostname() << " * :" << target.getRealName();
-        sendMessageCommand(socket, msg.str());
-    }
-    catch (std::runtime_error& e) {
-        sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + mask + " :No such nick/channel"); // send an error message if the channel does not exist
-    }
-}
-
-void    Server::PING(int socket, std::string ping) {
-    std::string server = ping.substr(ping.find(' ') + 1);
-    sendMessageCommand(socket, ":ircserver PONG " + server);
-}
-
+/* ----------------------------  PRIVMSG command ------------------------------
+                    Used for private communication with users 
+                    or to send messages to channels.
+   ---------------------------------------------------------------------------- */
+//      Sends a private message to a user or channel.
 void    Server::PRIVMSG(int socket, std::string privmsg) {
     Client& client = getClient(socket);
     std::string target, message;
-    std::istringstream iss(privmsg);
-    iss >> target >> std::ws; // get the target and get rid of the leading whitespace
-    std::getline(iss, message, '\0'); // get the message
+    std::stringstream ss(privmsg);
+    ss >> target >> std::ws; // get the target and get rid of the leading whitespace
+    std::getline(ss, message, '\0'); // get the message
     if (target.empty()) {
         sendMessageCommand(socket, ":ircserver 411 " + client.getNick() + " :No recipient given");
         return;
@@ -291,6 +256,38 @@ void    Server::PRIVMSG(int socket, std::string privmsg) {
     }
 }
 
+/* ----------------------------  PART command ------------------------------
+                        The user leaves one or more channels.
+   ----------------------------------------------------------------------- */
+//       leaves a channel.
+void    Server::PART(int socket, std::string part) {
+    Client& client = getClient(socket);
+    std::stringstream ss(part); // create a stringstream from the message
+    std::string channelName;
+    ss >> channelName; // get the channel name
+    if (channelName.empty()) {
+        sendMessageCommand(socket, ":ircserver 461 PART : Not enough parameters");
+        return;
+    }
+    try {
+        Channel& channel = getChannel(channelName);
+        if (!channel.hasClient(socket)) {
+            sendMessageCommand(socket, ":ircserver 442 " + channelName + " : You're not on that channel");
+            return;
+        }
+        helperOperator(channel, client, *this); // check if the client is the only operator in the channel
+        channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PART " + part);
+        channel.removeClient(socket);
+    } catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + channelName + " :No such channel");
+    } 
+}
+
+/* ----------------------------  QUIT command ------------------------------
+                Ends the session with an optional message
+            that is sent to all users in the channels the user was part of.
+   ------------------------------------------------------------------------- */
+//      disconnects from the server
 void    Server::QUIT(int socket, std::string quit) {
     Client& client = getClient(socket);
     std::stringstream ss;
@@ -299,98 +296,219 @@ void    Server::QUIT(int socket, std::string quit) {
     removeClient(socket);
 }
 
+/* ----------------------------  WHO command ------------------------------
+                Provides information about users.
+                If no parameters are given, it lists all visible users.
+   ------------------------------------------------------------------------- */
+//      lists users matching certain criteria.
+void    Server::WHO(int socket, std::string who) {
+    Client& client = getClient(socket);
+    std::stringstream ss(who);
+    std::string mask;
+    ss >> mask;
+    if (mask.empty()) {
+        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
+        return;
+    }
+    try {
+        Channel& channel = getChannel(mask);
+        const std::vector<int>& users = channel.getUsers();
+        for (size_t i = 0; i < users.size(); i++) {
+            Client& user = getClient(users[i]);
+            std::string mode = "H"; // set the mode to H for all users
+            if (channel.isOperator(user.getFd()))
+                mode += "@"; // add @ for operators
+            std::stringstream msg; // create a stringstream to store the message
+            msg << ":ircserver 352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mode << " " << ":0 " << user.getRealName();
+            sendMessageCommand(socket, msg.str());   
+        }
+        sendMessageCommand(socket, ":ircserver 315 " + client.getNick() + " " + mask + " :End of /WHO list");
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + mask + " :No such channel"); // send an error message if the channel does not exist
+    }
+}
+
+/* ----------------------------  WHOIS command ------------------------------
+                Returns detailed information about the user,
+                such as their hostname and channels they are in.
+   -------------------------------------------------------------------------- */
+//      gets information about a specific user.
+void    Server::WHOIS(int socket, std::string whois) {
+    Client& client = getClient(socket);
+    std::stringstream ss(whois);
+    std::string mask;
+    ss >> mask;
+    if (mask.empty()) {
+        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
+        return;
+    }
+    try {
+        Client &target = getClientByNick(mask);
+        std::stringstream msg;
+        msg << ":ircserver 311 " << client.getNick() << " " << target.getNick() << " " << target.getUserName() << " " << target.getHostname() << " * :" << target.getRealName();
+        sendMessageCommand(socket, msg.str());
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + mask + " :No such nick/channel"); // send an error message if the channel does not exist
+    }
+}
+
+/* ----------------------------  KICK command ------------------------------
+                A channel operator can kick out a user, 
+                optionally providing a reason.
+   ------------------------------------------------------------------------- */
+//      removes a user from a channel.
 void    Server::KICK(int socket, std::string kick) {
-    static_cast<void>(socket);
-    static_cast<void>(kick);
-    // Client& client = getClient(socket);
-    // std::istringstream iss(kick);
-    // std::string channelName, nick, comment;
-    // iss >> channelName >> nick >> comment;
+    Client& client = getClient(socket);
+    std::string channelName, target, message;
+    std::stringstream ss(kick);
+    std::stringstream broadcast;
     
-    // std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    // if (it != channels.end()) {
-    //     Channel& channel = it->second;
-    //     Client* targetClient = getClientByNick(nick);
-    //     if (targetClient && channel.hasUser(*targetClient)) {
-    //         channel.removeUser(*targetClient);
-    //         sendMessageCommand(socket, ":" + client.getNick() + " KICK " + channelName + " " + nick + " :" + comment);
-    //     } else {
-    //         sendMessageCommand(socket, ":server.name 441 " + client.getNick() + " " + nick + " " + channelName + " :They aren't on that channel");
-    //     }
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + channelName + " :No such channel");
-    // }
+    ss >> channelName >> target >> std::ws; // get the channel name and target and get rid of the leading whitespace
+    std::getline(ss, message, '\0'); // get the message
+    if (channelName.empty() || target.empty()) {
+        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " KICK :Not enough parameters");
+        return;
+    }
+    try {
+        Channel& channel = getChannel(channelName);
+        if (!channel.hasClient(socket)) { // if the client is not in the channel
+            sendMessageCommand(socket, ":ircserver 442 " + client.getNick() + " " + channelName + " :You're not on that channel");
+            return;
+        }
+        if (!channel.isOperator(socket)) { // if the client is not an operator
+            sendMessageCommand(socket, ":ircserver 482 " + client.getNick() + " :You're not a channel operator");
+            return;
+        }
+        Client& targetClient = getClientByNick(target);
+        if (!channel.hasClient(targetClient.getFd())) { // if the target is not in the channel
+            sendMessageCommand(socket, ":ircserver 441 " + client.getNick() + " " + target + " " + channelName + " :They aren't on that channel");
+            return;
+        }
+
+        broadcast << ":" << client.getNick() << "!" << client.getUserName() << "@" << client.getHostname() << " KICK " << channelName << " " << target << " :" << message;
+        channel.broadcastMessage(broadcast.str());
+        channel.removeClient(targetClient.getFd());
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + channelName + " :No such channel");
+        return;
+    }
 }
 
-
-
-void    Server::INVITE(int socket, std::string invite) {
-    static_cast<void>(socket);
-    static_cast<void>(invite);
-    // Client& client = getClient(socket);
-    // std::istringstream iss(invite);
-    // std::string nick, channelName;
-    // iss >> nick >> channelName;
-    
-    // Client* targetClient = getClientByNick(nick);
-    // if (targetClient) {
-    //     sendMessageCommand(targetClient->getFd(), ":" + client.getNick() + " INVITE " + nick + " :" + channelName);
-    //     sendMessageCommand(socket, ":server.name 341 " + client.getNick() + " " + nick + " " + channelName);
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 401 " + client.getNick() + " " + nick + " :No such nick");
-    // }
-}
-
-
-
+/* ----------------------------  TOPIC command ------------------------------
+                Without a topic, it shows the current topic.
+                With a topic, it sets the new topic..
+   -------------------------------------------------------------------------- */
+//      Sets or gets the topic of a channel.
 void    Server::TOPIC(int socket, std::string topic) {
-    static_cast<void>(socket);
-    static_cast<void>(topic);
-    // Client& client = getClient(socket);
-    // std::istringstream iss(topic);
-    // std::string channelName, newTopic;
-    // iss >> channelName >> newTopic;
-    
-    // std::map<std::string, Channel>::iterator it = channels.find(channelName);
-    // if (it != channels.end()) {
-    //     Channel& channel = it->second;
-    //     channel.setTopic(newTopic);
-    //     sendMessageCommand(socket, ":" + client.getNick() + " TOPIC " + channelName + " :" + newTopic);
-    // } else {
-    //     sendMessageCommand(socket, ":server.name 403 " + client.getNick() + " " + channelName + " :No such channel");
-    // }
+    Client& client = getClient(socket);
+    std::string channelName, newTopic;
+    std::stringstream ss(topic);
+    ss >> channelName >> std::ws; // get the channel name and get rid of the leading whitespace
+    std::getline(ss, newTopic, '\0'); // get the new topic
+    if (channelName.empty()) {
+        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " TOPIC :Not enough parameters");
+        return;
+    }
+    try {
+        Channel& channel = getChannel(channelName);
+        if (!channel.hasClient(socket)) { // if the client is not in the channel
+            sendMessageCommand(socket, ":ircserver 442 " + client.getNick() + " " + channelName + " :You're not on that channel");
+            return;
+        }
+        if (newTopic.empty()) {
+            sendMessageCommand(socket, ":ircserver 331 " + client.getNick() + " " + channelName + " :No topic is set");
+            return;
+        }
+        if (channel.getMode(ToPic) && !channel.isOperator(socket)) { // if the client is not an operator
+            sendMessageCommand(socket, ":ircserver 482 " + client.getNick() + " :You're not a channel operator");
+            return;
+        }
+        channel.setTopic(newTopic);
+        channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " TOPIC " + channelName + " :" + newTopic);
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + channelName + " :No such channel");
+    }
 }
 
+/* ----------------------------  INVITE command ------------------------------
+                Used to invite a user to a channel
+                they are not currently a member of.
+   -------------------------------------------------------------------------- */
+//      Invites a user to a channel.
+void    Server::INVITE(int socket, std::string invite) {
+    Client& client = getClient(socket);
+    std::string target, channelName;
+    std::stringstream ss(invite);
+    ss >> target >> channelName; // get the target and channel name
+    if (target.empty() || channelName.empty()) {
+        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " INVITE :Not enough parameters");
+        return;
+    }
+    try {
+        Client& targetClient = getClientByNick(target);
+        Channel& channel = getChannel(channelName);
+        if (!channel.hasClient(socket)) { // if the client is not in the channel
+            sendMessageCommand(socket, ":ircserver 442 " + client.getNick() + " " + channelName + " :You're not on that channel");
+            return;
+        }
+        if (channel.hasClient(targetClient.getFd())) { // if the target is already in the channel
+            sendMessageCommand(socket, ":ircserver 443 " + client.getNick() + " " + target + " " + channelName + " :is already on channel");
+            return;
+        }
+        sendMessageCommand(targetClient.getFd(), ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " INVITE " + target + " " + channelName);
+        channel.addInv(targetClient.getFd());
+    }
+    catch (std::runtime_error& e) {
+        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + channelName + " :No such channel");
+    }
+}
 
+/* ----------------------------  ISON command --------------------------------
+                Returns a list of online users matching the given nicknames.
+   --------------------------------------------------------------------------- */
+//      checks if a user is online.
 void    Server::ISON(int socket, std::string ison) {
-    static_cast<void>(socket);
-    static_cast<void>(ison);
-    // Client& client = getClient(socket);
-    // std::istringstream iss(ison);
-    // std::string nicks;
-    // std::getline(iss, nicks);
-    
-    // std::istringstream nickStream(nicks);
-    // std::string nick;
-    // std::string onlineNicks;
-    // while (nickStream >> nick) {
-    //     if (getClientByNick(nick)) {
-    //         if (!onlineNicks.empty()) {
-    //             onlineNicks += " ";
-    //         }
-    //         onlineNicks += nick;
-    //     }
-    // }
-    // sendMessageCommand(socket, ":server.name 303 " + client.getNick() + " :" + onlineNicks);
+    Client& client = getClient(socket);
+    std::string nickname;
+    std::vector<std::string> nicknames;
+    std::stringstream   message;
+    std::stringstream ss(ison);
+
+    ss >> nickname;
+    if (nickname.empty()) {
+        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " ISON :Not enough parameters");
+        return;
+    }
+    message << ":ircserver 303 " << client.getNick() << " :";
+    while (!ss.eof()) {
+        ss >> nickname;
+        try {
+            getClientByNick(nickname);
+            message << nickname << " ";
+        }
+        catch (std::runtime_error& e) {
+            continue; // ignore nicknames that do not exist
+        }
+    }
+    sendMessageCommand(socket, message.str());
 }
 
+/* ----------------------------  MODE command --------------------------------
+            Can be used to set or check user modes (like operator status) 
+            or channel modes (like moderation).
+   --------------------------------------------------------------------------- */
+//      sets or checks modes for a user or channel.
 void    Server::MODE(int socket, std::string mode){
     Client& client = getClient(socket);
     Channel *channel;
 
     std::string target, modeStr, modeParams;
-    std::istringstream iss(mode); // create a stringstream from the message
-    iss >> target >> modeStr >> modeParams; // get the target, mode, and mode parameters
+    std::stringstream ss(mode); // create a stringstream from the message
+    ss >> target >> modeStr >> modeParams; // get the target, mode, and mode parameters
     if (target.empty()) {
         sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
         return;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: majrou <majrou@student.42.fr>              +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/02 15:51:01 by majrou           ###   ########.fr       */
+/*   Updated: 2024/06/03 01:29:17 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ class Channel
             void                    addPlusV(int fd);
             void                    removePlusV(int fd);
             void                    setUserLimit(int limit);
+            void                    addInv(int fd);
 };
 
 void    helperOperator(Channel &channel, Client &client, Server &server);
