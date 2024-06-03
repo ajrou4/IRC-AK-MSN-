@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: omakran <omakran@student.42.fr>            +#+  +:+       +#+         #
+#    By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/18 18:37:28 by omakran           #+#    #+#              #
-#    Updated: 2024/06/02 16:02:52 by omakran          ###   ########.fr        #
+#    Updated: 2024/06/03 16:48:29 by haguezou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserver
 
-SRC = src/main.cpp src/ircserver.cpp src/client.cpp src/ircImplementation.cpp src/Channel.cpp 
+SRC = src/main.cpp src/ircserver.cpp src/client.cpp src/ircImplementation.cpp src/Channel.cpp $(wildcard src/commands/*.cpp) 
 
 # SRC = src/main.cpp src/ircserver.cpp #$(wildcard src/*.cpp)
 

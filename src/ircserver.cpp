@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/03 17:32:42 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/03 19:24:27 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ircserver.hpp"
 #include "Channel.hpp"
+#include "Colors.hpp"
 
 Server::Server(int port, const std::string& password) : port(port), password(password) {
     initializeServer();
@@ -170,7 +171,7 @@ void    Server::handleNewConnection() {
     std::string clientIp = inet_ntoa(client_addr.sin_addr); // client IP address.
     clients[client_fd] = new Client(client_fd, clientIp, clientIp); // create a new client object.
 
-    std::cout << "New connection from " << clientIp << std::endl;
+    std::cout << BOLDYELLOW << "New connection from " << clientIp << std::endl;
 }
 
 // handle a message from a client:
@@ -216,7 +217,7 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     Client& client = getClient(fd_client);
     std::vector<std::string>::iterator it = cmds.begin();
     while (it < cmds.end()) {
-        std::cout << "<<<<< Recieved from socket: " << fd_client << ": " << *it << std::endl;
+        std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << fd_client << ": " << *it << RESET << std::endl;
         std::string command_name;
         std::string command_params;
         std::stringstream ss(*it);
@@ -315,7 +316,7 @@ void    Server::removeClient(int fd) {
     if (it2 != fds.end()) {
         fds.erase(it2); // remove the client from the list of file descriptors to poll.
     }
-    std::cout << "Client desconnected from the Socket: " << fd << std::endl;
+    std::cout << BOLDRED << "Client desconnected from the Socket: " << fd << RESET << std::endl;
 }
 
 void    Server::cleanUp() {
