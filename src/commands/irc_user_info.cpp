@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_user_info.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:46:00 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/03 18:46:52 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/04 21:07:32 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ void    Server::WHO(int socket, std::string who) {
         const std::vector<int>& users = channel.getUsers();
         for (size_t i = 0; i < users.size(); i++) {
             Client& user = getClient(users[i]);
-            std::string mode = "H"; // set the mode to H for all users
+            std::string mod = "H"; // set the mod to H for all users
             if (channel.isOperator(user.getFd()))
-                mode += "@"; // add @ for operators
+                mod += "@"; // add @ for operators
             std::stringstream msg; // create a stringstream to store the message
-            msg << ":ircserver 352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mode << " " << ":0 " << user.getRealName();
+            msg << ":ircserver 352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mod << " " << ":0 " << user.getRealName();
             sendMessageCommand(socket, msg.str());   
         }
         sendMessageCommand(socket, ":ircserver 315 " + client.getNick() + " " + mask + " :End of /WHO list");

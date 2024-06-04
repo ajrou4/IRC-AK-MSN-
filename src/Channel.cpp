@@ -3,17 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-<<<<<<< Updated upstream
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 01:18:05 by omakran          ###   ########.fr       */
-=======
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 20:02:37 by omakran          ###   ########.fr       */
->>>>>>> Stashed changes
+/*   Updated: 2024/06/04 20:47:27 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
