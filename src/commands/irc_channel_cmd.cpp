@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_cmd.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/03 18:45:09 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/04 00:53:59 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void    Server::JOIN(int socket, std::string channelName) {
     } catch (std::runtime_error& e) {
         createChannel(channel_name, channel_key);
         Channel& channel = getChannel(channel_name);
+        channel_name = "#" + channel_name;
         channel.addClient(socket); // add the client to the channel
         channel.addOperator(socket); // make the client an operator if they are the first in the channel
         channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " JOIN " + channel_name);
@@ -128,10 +129,10 @@ void    Server::PRIVMSG(int socket, std::string privmsg) {
                 sendMessageCommand(socket, ":ircserver 404 " + client.getNick() + " " + target + " :Cannot send to channel");
                 return;
             }
-            channel.brodcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + "#" + target + " :" + message, socket);
+            channel.brodcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + "#" + target + " " + message, socket);
         } else {
             Client& targetClient = getClientByNick(target);
-            sendMessageCommand(targetClient.getFd(), ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " :" + message);
+            sendMessageCommand(targetClient.getFd(), ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " PRIVMSG " + target + " " + message);
         }
     }
     catch (std::runtime_error& e) {

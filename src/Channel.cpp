@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/03 22:45:46 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/04 00:08:50 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 Channel::Channel() : name(""), password(""), userLimit(0), mode(0), server(NULL) {}
 
-Channel::Channel(std::string Name, std::string password, Server *server):
-name(Name), password(password), userLimit(0), mode(0), server(server) {
+Channel::Channel(std::string Name, std::string pass, Server *server):
+name(Name), password(pass), userLimit(0), mode(0), server(server) {
     if (!password.empty()) {
         setMode(Key, true);
     }
@@ -43,7 +43,6 @@ Channel &Channel::operator=(const Channel &src)
             this->userLimit = src.userLimit;
             this->inviteOnly = src.inviteOnly;
        } 
-    
     return *this;
 }
 

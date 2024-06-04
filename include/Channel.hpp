@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/03 21:10:25 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/03 23:15:57 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ class Channel
             void                    addOperator(int socket);
             
             std::string const       &getName()const;
-            //                      should be declare setName() to change the name of the channel
             const std::string       getPassword() const;
             void                    setPassword(const std::string password);
             void                    setMode(ChannelMode KEY, bool value);
