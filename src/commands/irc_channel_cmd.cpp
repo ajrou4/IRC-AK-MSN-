@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_cmd.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< Updated upstream
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
 /*   Updated: 2024/06/04 00:53:59 by omakran          ###   ########.fr       */
+=======
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
+/*   Updated: 2024/06/04 20:12:10 by omakran          ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +35,7 @@ void    Server::LIST(int socket, std::string) {
         if (channel.getMode(Secret)) {
             continue; // skip secret channels
         }
-        ss << ":ircserver 322 " << client.getNick() << " " << channel.getName() << " " << channel.getUsers().size() << " : " << channel.getTopic();
+        ss << ":ircserver 322 " << client.getNick() << " " << channel.getName() << " " << channel.getCountClient() << " : " << channel.getTopic();
         sendMessageCommand(socket, ss.str());
     }
     sendMessageCommand(socket, ":ircserver 323 " + client.getNick() + " : End of /LIST");
@@ -67,7 +74,7 @@ void    Server::JOIN(int socket, std::string channelName) {
             sendMessageCommand(socket, ":ircserver 475 " + channel_name + " : Cannot join channel (+k)");
             return;
         }
-        if (channel.getMode(Limit) && channel.getUsers().size() >= channel.getMode(Limit)) {
+        if (channel.getMode(Limit) && channel.getCountClient() >= channel.getMode(Limit)) {
             sendMessageCommand(socket, ":ircserver 471 " + channel_name + " : Cannot join channel (+l)");
             return;
         }
@@ -78,13 +85,13 @@ void    Server::JOIN(int socket, std::string channelName) {
         // if the client is not already in the channel, add them
         channel.addClient(socket);
         channel.removeInv(socket); // remove the client from the invite list
-        if (channel.getUsers().size() == 1) {
+        if (channel.getCountClient() == 1) { // if the client is the first in the channel
             channel.addOperator(socket); // make the client an operator if they are the first in the channel
         }
         channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " JOIN " + channel_name);
         sendMessageCommand(socket, ":ircserver 332 " + client.getNick() + " " + channel_name + " : " + channel.getTopic());
         sendMessageCommand(socket, ":ircserver 353 " + client.getNick() + " = " + channel_name + " : " + client.getNick());
-        sendMessageCommand(socket, ":ircserver 366 " + client.getNick() + " " + channel_name + channel.getModes());
+        sendMessageCommand(socket, ":ircserver 324 " + client.getNick() + " " + channel_name + channel.getModes());
     } catch (std::runtime_error& e) {
         createChannel(channel_name, channel_key);
         Channel& channel = getChannel(channel_name);

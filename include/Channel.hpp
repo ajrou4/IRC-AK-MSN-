@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
+<<<<<<< Updated upstream
 /*   Updated: 2024/06/04 01:18:52 by omakran          ###   ########.fr       */
+=======
+/*   Updated: 2024/06/04 20:02:17 by omakran          ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +103,8 @@ class Channel
             void                    removePlusV(int fd);
             void                    setUserLimit(int limit);
             void                    addInv(int fd);
+            int                     getCountOperator() const;
+            int                     getCountClient() const;
 };
 
 void                                helperOperator(Channel &channel, Client &client, Server &server); // helper function to add operator to the channel.

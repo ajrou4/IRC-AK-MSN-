@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
+<<<<<<< Updated upstream
 /*   Updated: 2024/06/04 00:53:51 by omakran          ###   ########.fr       */
+=======
+/*   Updated: 2024/06/04 20:25:40 by omakran          ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,7 +276,7 @@ Client  &Server::getClientByNick(const std::string& nick) {
     return *it->second; // return the client object.
 }
 
-Channel &Server::getChannel(std::string& channel) {
+Channel &Server::getChannel(std::string channel) {
     if (channel[0] == '#')
         channel = channel.substr(1); // remove the '#' character
     for (size_t i = 0; i < channel.size(); i++) {

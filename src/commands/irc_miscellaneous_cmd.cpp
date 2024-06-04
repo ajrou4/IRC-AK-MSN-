@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_miscellaneous_cmd.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/03 18:56:13 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/04 19:34:08 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,6 @@ void    Server::ISON(int socket, std::string ison) {
     }
     sendMessageCommand(socket, message.str());
 }
-
-
 
 /* ----------------------------  MODE command --------------------------------
             Can be used to set or check user modes (like operator status) 
@@ -86,21 +84,28 @@ void    Server::MODE(int socket, std::string mode){
         return;
     }
     switch (modeStr[0]) {
-        case 'o': // means give/take channel operator privileges
+        case 'i': // means set the invite-only mode
+            channel->setMode(invit_ONLY, addMode);
+            break;
+        case 'm': // means set the moderated mode
+            channel->setMode(Moderated, addMode);
+            break;
+        case 't': // means set the topic protection mode
+            channel->setMode(ToPic, addMode);
+            break;
+        case 's': // means set the secret mode
+            channel->setMode(Secret, addMode);
+            break;
+        case 'k': // means set the channel key
             if (modeParams.empty()) {
                 sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
                 return;
             }
-            try {
-                Client& targetClient = getClientByNick(modeParams);
-                if (addMode) { // if the mode is a plus
-                    channel->addOperator(targetClient.getFd()); // add the client as an operator
-                } else {
-                    channel->removeOperator(targetClient.getFd()); // remove the client as an operator
-                }
-            }
-            catch (std::runtime_error& e) {
-                sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
+            channel->setMode(Key, addMode);
+            if (addMode) {
+                channel->setPassword(modeParams);
+            } else {
+                channel->setPassword("");
             }
             break;
         case 'v': // means give/take the voice privilege
@@ -120,16 +125,21 @@ void    Server::MODE(int socket, std::string mode){
                 sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
             }
             break;
-        case 'k': // means set the channel key
+        case 'o': // means give/take channel operator privileges
             if (modeParams.empty()) {
                 sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
                 return;
             }
-            channel->setMode(Key, addMode);
-            if (addMode) {
-                channel->setPassword(modeParams);
-            } else {
-                channel->setPassword("");
+            try {
+                Client& targetClient = getClientByNick(modeParams);
+                if (addMode) { // if the mode is a plus
+                    channel->addOperator(targetClient.getFd()); // add the client as an operator
+                } else {
+                    channel->removeOperator(targetClient.getFd()); // remove the client as an operator
+                }
+            }
+            catch (std::runtime_error& e) {
+                sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
             }
             break;
         case 'l': // means set the user limit
@@ -142,18 +152,6 @@ void    Server::MODE(int socket, std::string mode){
             } else {
                 channel->setUserLimit(0); // set the user limit to 0
             }
-            break;
-        case 'i': // means set the invite-only mode
-            channel->setMode(invit_ONLY, addMode);
-            break;
-        case 'm': // means set the moderated mode
-            channel->setMode(Moderated, addMode);
-            break;
-        case 's': // means set the secret mode
-            channel->setMode(Secret, addMode);
-            break;
-        case 't': // means set the topic protection mode
-            channel->setMode(ToPic, addMode);
             break;
         default:
             sendMessageCommand(socket, ":ircserver 472 " + client.getNick() + " " + modeStr + " :is unknown mode char to me");

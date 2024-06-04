@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< Updated upstream
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
 /*   Updated: 2024/06/04 01:18:05 by omakran          ###   ########.fr       */
+=======
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
+/*   Updated: 2024/06/04 20:02:37 by omakran          ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +100,10 @@ bool    Channel::isOperator(int fd) {
     return false;
 }
 
+int Channel::getCountOperator() const{
+    return operators.size();
+}
+
 std::string const &Channel::getName()const{
     return this->name;
 }
@@ -175,6 +186,10 @@ void    Channel::setUserLimit(int limit) {
     userLimit = limit;
 }
 
+int     Channel::getCountClient() const {
+    return clients.size();
+}
+
 void    Channel::removeOperator(int fd) {
     std::vector<int>::iterator it = operators.begin();
     while (it != operators.end()) {
@@ -246,7 +261,7 @@ void    Channel::removeClient(int fd) {
 
 void    helperOperator(Channel &channel, Client &client, Server &server) {
     int fd = client.getFd();
-    if (channel.isOperator(fd) && channel.getUsers().size() == 1) {
+    if (channel.isOperator(fd) && channel.getCountOperator() == 1) {
         std::vector<int> users = channel.getUsers();
         for (size_t i = 0; i < users.size(); i++) {
             if (users[i] != fd) {
