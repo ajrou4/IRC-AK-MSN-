@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 00:08:50 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/04 01:18:05 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ void Channel::setMode(ChannelMode KEY, bool value){
 void Channel::setPassword(const std::string password){
     this->password = password;
 }
-
-
 
 void Channel::inviteUser(std::string userName){
     inviteUser2.push_back(userName);

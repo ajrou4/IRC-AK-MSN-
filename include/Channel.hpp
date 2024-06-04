@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/03 23:15:57 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/04 01:18:52 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ class Channel
             Channel& operator=(const Channel &src);
             ~Channel();
 
-            // void                 addUser(Client& client);
             void                    addOperator(int socket);
             
             std::string const       &getName()const;
