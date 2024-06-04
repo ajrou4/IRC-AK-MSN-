@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 20:47:27 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/04 22:53:35 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void    Channel::addOperator(int socket) {
         operators.push_back(socket);
     } else {
         std::cerr << "Client already in the channel" << std::endl;
+        return;
     }
 }
 
@@ -82,15 +83,8 @@ const std::string &Channel::getTopic()const{
     return this->topic;
 }
 
-bool    Channel::isOperator(int fd) {
-    std::vector<int>::iterator it = operators.begin();
-    while (it != operators.end()) {
-        if (*it == fd) {
-            return true;
-        }
-        it++;
-    }
-    return false;
+bool    Channel::isOperator(int fd) const {
+    return std::find(operators.begin(), operators.end(), fd) != operators.end();
 }
 
 int Channel::getCountOperator() const{
@@ -220,6 +214,18 @@ void    Channel::brodcastMessage(std::string message, int fd) {
             server->sendMessageCommand(*it, message);
         }
     }
+}
+
+std::string Channel::getClientsNicks() const {
+    std::string nicks;
+    for (std::vector<int>::const_iterator it = clients.begin(); it != clients.end(); it++) {
+        if (isOperator(*it)) { // check if the client is an operator
+            nicks += "@" + server->getClient(*it).getNick() + " ";
+        } else {
+            nicks += server->getClient(*it).getNick() + " ";
+        }
+    }
+    return nicks;
 }
 
 std::string Channel::getModes() const {

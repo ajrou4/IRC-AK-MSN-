@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 20:53:49 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/04 22:54:17 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void    Server::LIST(int socket, std::string) {
     for (; it != channels.end(); ++it) {
         std::stringstream ss; // create a stringstream to store the message
         Channel& channel = *it->second; // get the channel
-        if (channel.getMode(Secret)) {
+        if (channel.getMode(Secret) && !channel.hasClient(socket)) {
             continue; // skip secret channels
         }
         ss << ":ircserver 322 " << client.getNick() << " " << channel.getName() << " " << channel.getCountClient() << " : " << channel.getTopic();
@@ -83,7 +83,7 @@ void    Server::JOIN(int socket, std::string channelName) {
         }
         channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " JOIN " + channel_name);
         sendMessageCommand(socket, ":ircserver 332 " + client.getNick() + " " + channel_name + " : " + channel.getTopic());
-        sendMessageCommand(socket, ":ircserver 353 " + client.getNick() + " = " + channel_name + " : " + client.getNick());
+        sendMessageCommand(socket, ":ircserver 353 " + client.getNick() + " = " + channel_name + " : " + channel.getClientsNicks());
         sendMessageCommand(socket, ":ircserver 324 " + client.getNick() + " " + channel_name + channel.getModes());
     } catch (std::runtime_error& e) {
         createChannel(channel_name, channel_key);
@@ -92,11 +92,10 @@ void    Server::JOIN(int socket, std::string channelName) {
         channel.addOperator(socket); // make the client an operator if they are the first in the channel
         channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " JOIN " + channel_name);
         sendMessageCommand(socket, ":ircserver 331 " + client.getNick() + " " + channel_name + " :No topic is set");
-        sendMessageCommand(socket, ":ircserver 353 " + client.getNick() + " = " + channel_name + " : " + client.getNick());
+        sendMessageCommand(socket, ":ircserver 353 " + client.getNick() + " = " + channel_name + " : " + channel.getClientsNicks());
         sendMessageCommand(socket, ":ircserver 324 " + client.getNick() + " " + channel_name + " " + channel.getModes());
     }
 }
-
 
 /* ----------------------------  PRIVMSG command ------------------------------
                     Used for private communication with users 

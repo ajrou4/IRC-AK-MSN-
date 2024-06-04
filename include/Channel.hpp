@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/04 20:47:02 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/04 22:51:20 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ class Channel
             bool                    hasClient(int fd) const;
             void                    addClient(int fd);
             void                    removeInv(int fd);
-            bool                    isOperator(int fd);
+            bool                    isOperator(int fd) const;
             std::string             getModes() const; // return the channel modes as a string.
             void                    broadcastMessage(std::string message); // send a message to all clients in the channel.
             void                    brodcastMessage(std::string message, int fd); // send a message to all clients in the channel except the sender.
@@ -101,6 +101,7 @@ class Channel
             void                    addInv(int fd);
             int                     getCountOperator() const;
             int                     getCountClient() const;
+            std::string             getClientsNicks() const;
 };
 
 void                                helperOperator(Channel &channel, Client &client, Server &server); // helper function to add operator to the channel.
