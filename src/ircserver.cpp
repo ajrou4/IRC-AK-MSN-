@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/06 04:20:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:02:54 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     Client& client = getClient(fd_client);
     std::vector<std::string>::iterator it = cmds.begin();
     while (it < cmds.end()) {
-        std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << *it << RESET << std::endl;
+        std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << RESET << *it << std::endl;
         std::string command_name;
         std::string command_params;
         std::stringstream ss(*it);

@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 04:06:13 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:12:31 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,6 @@ void    Channel::addClient(int fd) {
     if (!hasClient(fd)) {
         // add the client to the channel
         clients.push_back(fd);
-    } else {
-        std::cerr << "Client already in the channel" << std::endl;
     }
 }
 
@@ -126,13 +124,14 @@ void    Channel::removeInv(int fd) {
 }   
 
 void    Channel::addInv(int fd) {
-    if (!hasClient(fd)) {
+    if (!hasInvet(fd)) {
         // add the client to the channel
         invites.push_back(fd);
-    } else {
-        std::cerr << "Client already in the channel" << std::endl;
-        return;
     }
+}
+
+bool    Channel::hasInvet(int fd) const {
+    return std::find(invites.begin(), invites.end(), fd) != invites.end();
 }
 
 bool    Channel::hasPlusV(int fd) {

@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 04:35:24 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 22:59:55 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void    Server::JOIN(int socket, std::string channelName) {
             sendMessageCommand(socket, intro() + "471 " + channel_name + " : Cannot join channel (+l)");
             return;
         }
-        if (channel.getMode(invit_ONLY) && !channel.hasClient(socket)) {
+        if (channel.getMode(invit_ONLY) && !channel.hasInvet(socket)) {
             sendMessageCommand(socket, intro() + "473 " + channel_name + " : Cannot join channel (+i)");
             return;
         }
