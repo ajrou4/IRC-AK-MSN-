@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/06 22:58:58 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:50:32 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ class Channel
             void                    addInv(int fd);
             bool                    hasInvet(int fd) const;
             int                     getCountOperator() const;
+            int                     getLimit() const;
             int                     getCountClient() const;
             std::string             getClientsNicks() const;
 };

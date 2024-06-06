@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_cmd.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:39:05 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:58:25 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void    Server::JOIN(int socket, std::string channelName) {
             sendMessageCommand(socket, intro() + "475 " + channel_name + " : Cannot join channel (+k)");
             return;
         }
-        if (channel.getMode(Limit) && channel.getCountClient() >= channel.getMode(Limit)) {
+        if (channel.getMode(Limit) && channel.getCountClient() >= channel.getLimit()) {
             sendMessageCommand(socket, intro() + "471 " + channel_name + " : Cannot join channel (+l)");
             return;
         }
@@ -173,7 +173,7 @@ void    Server::PART(int socket, std::string part) {
 void    Server::QUIT(int socket, std::string quit) {
     Client& client = getClient(socket);
     std::stringstream ss;
-    ss << client.intro() << " QUIT : " << quit;
+    ss << client.intro() << "QUIT : " << quit;
     sendMessageToClientChannels(socket, ss.str());
     removeClient(socket);
 }

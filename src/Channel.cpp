@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:12:31 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:50:52 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,10 @@ std::string Channel::getModes() const {
     if (getMode(Secret))
         modes += "s";
     return modes;
+}
+
+int Channel::getLimit() const {
+    return userLimit;
 }
 
 void    Channel::removeClient(int fd) {

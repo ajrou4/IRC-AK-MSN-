@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:49:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:10:42 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:59:03 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void    Server::KICK(int socket, std::string kick) {
             return;
         }
 
-        broadcast << client.intro() << " KICK " << channelName << " " << target << " : " << message;
+        broadcast << client.intro() << "KICK " << channelName << " " << target << " : " << message;
         channel.broadcastMessage(broadcast.str());
         channel.removeClient(targetClient.getFd());
     }
