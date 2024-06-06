@@ -6,13 +6,12 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:46:00 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 21:07:32 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 02:16:23 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.hpp"
 #include "ircserver.hpp"
-
 
 /* ----------------------------  WHO command ------------------------------
                 Provides information about users.
@@ -25,7 +24,7 @@ void    Server::WHO(int socket, std::string who) {
     std::string mask;
     ss >> mask;
     if (mask.empty()) {
-        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
+        sendMessageCommand(socket, intro() + "431 WHO : No target given");
         return;
     }
     try {
@@ -37,16 +36,15 @@ void    Server::WHO(int socket, std::string who) {
             if (channel.isOperator(user.getFd()))
                 mod += "@"; // add @ for operators
             std::stringstream msg; // create a stringstream to store the message
-            msg << ":ircserver 352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mod << " " << ":0 " << user.getRealName();
+            msg << intro() << "352 " << client.getNick() << " " << channel.getName() << " " << user.getUserName() << " " << user.getHostname() << " " << "*" << " " << user.getNick() << " " << mod << " " << ":0 " << user.getRealName();
             sendMessageCommand(socket, msg.str());   
         }
-        sendMessageCommand(socket, ":ircserver 315 " + client.getNick() + " " + mask + " :End of /WHO list");
+        sendMessageCommand(socket, intro() + "315 " + client.getNick() + " " + channel.getName() + " : End of /WHO list");
     }
     catch (std::runtime_error& e) {
-        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + mask + " :No such channel"); // send an error message if the channel does not exist
+        sendMessageCommand(socket, intro() + "403 " + mask + " :No such channel"); // send an error message if the channel does not exist
     }
 }
-
 
 /* ----------------------------  WHOIS command ------------------------------
                 Returns detailed information about the user,
@@ -59,16 +57,16 @@ void    Server::WHOIS(int socket, std::string whois) {
     std::string mask;
     ss >> mask;
     if (mask.empty()) {
-        sendMessageCommand(socket, ":ircserver 431 " + client.getNick() + " :No nickname given");
+        sendMessageCommand(socket, intro() + "431 WHOIS  : No target given");
         return;
     }
     try {
         Client &target = getClientByNick(mask);
         std::stringstream msg;
-        msg << ":ircserver 311 " << client.getNick() << " " << target.getNick() << " " << target.getUserName() << " " << target.getHostname() << " * :" << target.getRealName();
+        msg << intro() + "311 " << client.getNick() << " " << mask  << " " << client.getUserName() << " " << client.getHostname() << " * : " << target.getRealName();
         sendMessageCommand(socket, msg.str());
     }
     catch (std::runtime_error& e) {
-        sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + mask + " :No such nick/channel"); // send an error message if the channel does not exist
+        sendMessageCommand(socket, intro() + "401 " + mask + " : No such target"); // send an error message if the channel does not exist
     }
 }

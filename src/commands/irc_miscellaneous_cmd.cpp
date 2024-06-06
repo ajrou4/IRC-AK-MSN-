@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/04 19:34:08 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 04:25:36 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,19 @@ void    Server::ISON(int socket, std::string ison) {
 
     ss >> nickname;
     if (nickname.empty()) {
-        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " ISON :Not enough parameters");
+        sendMessageCommand(socket, intro() + "461 ISON : Not enough parameters");
         return;
     }
-    message << ":ircserver 303 " << client.getNick() << " :";
-    while (!ss.eof()) {
-        ss >> nickname;
+    message << intro() << "303 " << client.getNick() << " :";
+    while (!ss.eof()) { // while the stringstream is not at the end
         try {
-            getClientByNick(nickname);
-            message << nickname << " ";
+            Client& target = getClientByNick(nickname);
+            message << " " << target.getNick();
         }
         catch (std::runtime_error& e) {
-            continue; // ignore nicknames that do not exist
+            message << " " << nickname;
         }
+        ss >> nickname;
     }
     sendMessageCommand(socket, message.str());
 }
@@ -48,39 +48,38 @@ void    Server::ISON(int socket, std::string ison) {
             or channel modes (like moderation).
    --------------------------------------------------------------------------- */
 //      sets or checks modes for a user or channel.
-void    Server::MODE(int socket, std::string mode){
+void    Server::MODE(int socket, std::string mode) {
     Client& client = getClient(socket);
-    Channel *channel;
-
     std::string target, modeStr, modeParams;
     std::stringstream ss(mode); // create a stringstream from the message
     ss >> target >> modeStr >> modeParams; // get the target, mode, and mode parameters
     if (target.empty()) {
-        sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+        sendMessageCommand(socket, intro() + "461 MODE : Not enough parameters");
         return;
     }
+    Channel *channel;
     try {
         channel = &getChannel(target); // try to get the channel
     }
     catch (std::runtime_error& e) {
-        sendMessageCommand(socket, ":ircserver 403 " + client.getNick() + " " + target + " :No such channel"); // send an error message if the channel does not exist
+        sendMessageCommand(socket, intro() + "403 MODE : No such channel"); // send an error message if the channel does not exist
         return;
     }
     if (mode.empty()) {
-        sendMessageCommand(socket, ":ircserver 324 " + client.getNick() + " " + target + " " + channel->getModes());
+        sendMessageCommand(socket, intro() + "324 " + client.getNick() + " " + channel->getName() + " " + channel->getModes());
         return;
     }
     if (!channel->isOperator(socket) || !channel->hasClient(socket)) { // if the client is not an operator or not in the channel
-        sendMessageCommand(socket, ":ircserver 482 " + client.getNick() + " :You're not a channel operator");
+        sendMessageCommand(socket, intro() + "482 MODE : You're not a channel operator");
         return;
     }
     bool addMode = true;
-    if (modeStr[0] == '+') {
-        addMode = true; // set addMode to true if the mode is a plus
+    if (modeStr[0] == '+' || modeStr[0] == '-') {
+        addMode = modeStr[0] == '+'; // if the mode is a plus
         modeStr = modeStr.substr(1); // remove the plus
     }
     if (modeStr.length() != 1) { // if the mode is not a single character
-        sendMessageCommand(socket, ":ircserver 472 " + client.getNick() + " " + modeStr + " :is unknown mode char to me");
+        sendMessageCommand(socket, intro() + "472 MODE : is unknown mode char to me");
         return;
     }
     switch (modeStr[0]) {
@@ -97,20 +96,17 @@ void    Server::MODE(int socket, std::string mode){
             channel->setMode(Secret, addMode);
             break;
         case 'k': // means set the channel key
-            if (modeParams.empty()) {
-                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+            if (modeParams.empty() && addMode) {
+                sendMessageCommand(socket, intro() + "461 MODE : Not enough parameters");
                 return;
             }
             channel->setMode(Key, addMode);
-            if (addMode) {
+            if (addMode)
                 channel->setPassword(modeParams);
-            } else {
-                channel->setPassword("");
-            }
             break;
         case 'v': // means give/take the voice privilege
             if (modeParams.empty()) {
-                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                sendMessageCommand(socket, intro() + "461 MODE : Not enough parameters");
                 return;
             }
             try {
@@ -122,12 +118,12 @@ void    Server::MODE(int socket, std::string mode){
                 }
             }
             catch (std::runtime_error& e) {
-                sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
+                sendMessageCommand(socket, intro() + "401 MODE : No such target");
             }
             break;
         case 'o': // means give/take channel operator privileges
             if (modeParams.empty()) {
-                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                sendMessageCommand(socket, intro() + "461 MODE : Not enough parameters");
                 return;
             }
             try {
@@ -139,12 +135,16 @@ void    Server::MODE(int socket, std::string mode){
                 }
             }
             catch (std::runtime_error& e) {
-                sendMessageCommand(socket, ":ircserver 401 " + client.getNick() + " " + modeParams + " :No such nick/channel");
+                sendMessageCommand(socket, intro() + "401 MODE : No such target");
             }
             break;
         case 'l': // means set the user limit
             if (modeParams.empty() && addMode) {
-                sendMessageCommand(socket, ":ircserver 461 " + client.getNick() + " MODE :Not enough parameters");
+                sendMessageCommand(socket, intro() + "461 MODE : Not enough parameters");
+                return;
+            }
+            if (modeParams.find_first_not_of("0123456789") != std::string::npos) { // if the mode parameters are not numbers
+                sendMessageCommand(socket, intro() + "472 MODE : is unknown mode char to me");
                 return;
             }
             if (addMode) {
@@ -154,9 +154,8 @@ void    Server::MODE(int socket, std::string mode){
             }
             break;
         default:
-            sendMessageCommand(socket, ":ircserver 472 " + client.getNick() + " " + modeStr + " :is unknown mode char to me");
+            sendMessageCommand(socket, intro() + "472 MODE : Unknown mode");
             break;
     }
-    channel->broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " MODE " + channel->getName() + " "  );
+    channel->broadcastMessage(client.intro() + " MODE " + channel->getName() + " "  + (addMode ? "+" : "-") + modeStr + " " + (modeStr == "k" ? "********" : modeParams));
 }
-

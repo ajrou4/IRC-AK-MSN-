@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_cnx_auth.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 16:35:49 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/03 17:01:02 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/06 01:18:57 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ void    Server::PASS(int socket, std::string pass) {
     Client& client = getClient(socket);
     // Check if the client is already authenticated
     if (client.isAuthenticated()) {
-        sendMessageCommand(socket, ":ircserver 462 :You may not reregister");
+        sendMessageCommand(socket, intro() +  "462 :You may not reregister");
         return;
     } else if (pass != password) {
-        sendMessageCommand(socket, ":ircserver 464 :Password incorrect");
+        sendMessageCommand(socket, intro() +  "464 :Password incorrect");
         return;
     } else {
         client.setAuthenticated(true);
@@ -45,15 +45,15 @@ void    Server::NICK(int socket, std::string nickname) {
     // Check if the nickname is valid
     if (nickname.size() < 1 || nickname.size() > 9 || nickname.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\\[]{}|`_-^") != std::string::npos
         || nickname.find_first_of("0123456789-", 0, 1) == 0) {
-            sendMessageCommand(socket, ":ircserver 432 " + nickname + " : Erroneous nickname");
+            sendMessageCommand(socket, intro() + "432 " + nickname + " : Erroneous nickname");
             return;
     }
     try {
         getClientByNick(nickname);
-        sendMessageCommand(socket, ":ircserver 433 " + nickname + " : Nickname is already in use");
+        sendMessageCommand(socket, intro() + "433 " + nickname + " : Nickname is already in use");
     } catch (std::runtime_error& e) {
         std::stringstream broadcastMessage;
-        broadcastMessage << ":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() << " NICK " <<nickname; // broadcast the new nickname
+        broadcastMessage << client.intro() + " NICK " <<nickname; // broadcast the new nickname
         if (client.getUserName() != "" && !client.isRegistered()) // if the client is not registered, register them
             registerNewClient(socket);
         client.setNick(nickname);
@@ -79,15 +79,15 @@ void    Server::USER(int socket, std::string params) {
     if (username.size() < 1 || username.size() > 12
         || username.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != std::string::npos
         || username.find_first_of("0123456789", 0, 1) == 0) {
-            sendMessageCommand(socket, ":ircserver 432 " + username + " : Erroneous username");
+            sendMessageCommand(socket, intro() + "432 " + username + " : Erroneous username");
             return;
     }
     if (!realname.empty() && (realname.size() > 50 || realname.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789[]{}\\|^`_- ") != std::string::npos)) {
-        sendMessageCommand(socket, ":ircserver 501 " + realname + " : Invalid Realname");
+        sendMessageCommand(socket, intro() + "501 " + realname + " : Invalid Realname");
         return;
     }
     std::stringstream broadcastMessage;
-    broadcastMessage << ":" << client.getNick() << "!" << username << "@" + client.getHostname() << " USER " << params; // broadcast the new username
+    broadcastMessage << client.intro() << " USER " << params; // broadcast the new username
     client.setUserName(username);
     client.setRealName(realname);
     if (client.getNick() != "" && !client.isRegistered()) // if the client is not registered, register them

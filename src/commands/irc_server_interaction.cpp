@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_server_interaction.cpp                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 17:03:42 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/03 17:04:44 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/06 01:26:47 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,5 @@
    -----------------------------------------------------------------------*/
 //      checks the connection between the client and the server.
 void    Server::PING(int socket, std::string ping) {
-    std::string server = ping.substr(ping.find(' ') + 1);
-    sendMessageCommand(socket, ":ircserver PONG " + server);
+    sendMessageCommand(socket, intro() + "PONG " + ping);
 }

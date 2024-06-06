@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/04 22:51:20 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 02:30:14 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ class Channel
             
             //                      void kickUser(const std::string &userName);
             void                    inviteUser(std::string userName);
-            void                    setTopic(const std::string &topic);
+            void                    setTopic(std::string topic);
             //                      void joinChannel(Client& client);
 
             const std::vector<int>  &getUsers()const;

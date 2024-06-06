@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:46:31 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/03 21:09:35 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 01:12:18 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,13 @@ public:
 
     //                          internal message processing
     void                        handleMessage(const std::string& message);
+    std::string                 intro(void) const;
 
     bool                        isAuthenticated(void) const;
     bool                        outBoundReady(void) const;
     bool                        inboundReady(void) const;
     bool                        isRegistered(void) const;
-
+    std::string                 getIdentifierNetwork(void) const;
     void                        setAuthenticated(bool authenticated = true);
     void                        newMessage(const std::string &message);
     void                        appendToInboundBuffer(std::string data); // append data to the inbound buffer.
