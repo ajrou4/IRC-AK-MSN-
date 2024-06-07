@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_cmd.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:58:25 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 00:57:38 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void    Server::JOIN(int socket, std::string channelName) {
         channel.addClient(socket); // add the client to the channel
         channel.addOperator(socket); // make the client an operator if they are the first in the channel
         channel.broadcastMessage(client.intro() + "JOIN " + channel_name);
-        sendMessageCommand(socket, intro() + "331 " + client.getNick() + " " + channel_name + " : No topic is set");
+        sendMessageCommand(socket, intro() + "331 " + client.getNick() + " " + channel_name + " :No topic is set");
         sendMessageCommand(socket, intro() + "353 " + client.getNick() + " = " + channel_name + " : " + channel.getClientsNicks());
         sendMessageCommand(socket, intro() + "324 " + client.getNick() + " " + channel_name + " " + channel.getModes());
     }
