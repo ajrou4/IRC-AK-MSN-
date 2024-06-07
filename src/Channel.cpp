@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 16:39:30 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 19:47:55 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void    Channel::removePlusV(int fd) {
 
 void    Channel::setUserLimit(int limit) {
     userLimit = limit;
-    setMode(Limit, true); // ensure the limit mode is set
+    setMode(Limit, limit > 0); // set the limit mode if the limit is greater than 0
 }
 
 int     Channel::getCountClient() const {
@@ -208,22 +208,18 @@ std::string Channel::getModes() const {
     std::string modes = "+n";
     if (getMode(invit_ONLY))
         modes += "i";
-    if (getMode(Key))
-        modes += "k";
     if (getMode(ToPic))
         modes += "t";
+    if (getMode(Key))
+        modes += "k";
     if (getMode(Limit))
         modes += "l";
-    if (getMode(Moderated))
-        modes += "m";
     if (getMode(Secret))
         modes += "s";
-    // if (getMode(Limit) && userLimit > 0) {
-    //     modes += " " + std::to_string(userLimit);  // Include the limit value
-    // }
+    if (getMode(Moderated))
+        modes += "m";
     return modes;
 }
-
 
 int Channel::getLimit() const {
     return userLimit;
@@ -248,7 +244,7 @@ void    helperOperator(Channel &channel, Client &client, Server &server) {
         for (size_t i = 0; i < users.size(); i++) {
             if (users[i] != fd) {
                 channel.addOperator(users[i]);
-                channel.broadcastMessage(":" + client.getNick() + "!" + client.getUserName() + "@" + client.getHostname() + " MODE " + channel.getName() + " +o " + server.getClient(users[i]).getNick());
+                channel.broadcastMessage(client.intro() + "MODE " + channel.getName() + " +o " + server.getClient(users[i]).getNick());
                 break;
             }
         }

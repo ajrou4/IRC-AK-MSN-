@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_miscellaneous_cmd.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 07:13:29 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 19:27:05 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,9 @@ void    Server::MODE(int socket, std::string mode) {
         sendMessageCommand(socket, intro() + "482 MODE : You're not a channel operator");
         return;
     }
-    bool addMode = true;
+    bool addMode = (modeStr[0] == '+'); // that condition will return true if the mode is a plus.
     if (modeStr[0] == '+' || modeStr[0] == '-') {
-        addMode = (modeStr[0] == '+'); // if the mode is a plus
-        modeStr = modeStr.substr(1); // remove the plus
+        modeStr = modeStr.substr(1); // remove the plus or minus from the mode
     }
     if (modeStr.length() != 1) { // if the mode is not a single character
         sendMessageCommand(socket, intro() + "472 MODE : is unknown mode char to me");
@@ -148,9 +147,12 @@ void    Server::MODE(int socket, std::string mode) {
                 return;
             }
             if (addMode)
+            {
                 channel->setUserLimit(std::stoi(modeParams)); // stoi converts the string to an integer
-            else
+            }
+            else {
                 channel->setUserLimit(0); // set the user limit to 0
+            }
             break;
         default:
             sendMessageCommand(socket, intro() + "472 MODE : Unknown mode");
