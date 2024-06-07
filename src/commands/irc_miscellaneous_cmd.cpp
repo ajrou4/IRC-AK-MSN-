@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_miscellaneous_cmd.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 02:57:31 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 07:13:29 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ void    Server::MODE(int socket, std::string mode) {
         sendMessageCommand(socket, intro() + "324 " + client.getNick() + " " + channel->getName() + " " + channel->getModes());
         return;
     }
-    if (!channel->isOperator(socket) || !channel->hasClient(socket)) { // if the client is not an operator or not in the channel
+    if (!channel->hasClient(socket) || !channel->isOperator(socket)) { // if the client is not an operator or not in the channel
         sendMessageCommand(socket, intro() + "482 MODE : You're not a channel operator");
         return;
     }
     bool addMode = true;
     if (modeStr[0] == '+' || modeStr[0] == '-') {
-        addMode = modeStr[0] == '+'; // if the mode is a plus
+        addMode = (modeStr[0] == '+'); // if the mode is a plus
         modeStr = modeStr.substr(1); // remove the plus
     }
     if (modeStr.length() != 1) { // if the mode is not a single character
@@ -147,15 +147,14 @@ void    Server::MODE(int socket, std::string mode) {
                 sendMessageCommand(socket, intro() + "472 MODE : is unknown mode char to me");
                 return;
             }
-            if (addMode) {
+            if (addMode)
                 channel->setUserLimit(std::stoi(modeParams)); // stoi converts the string to an integer
-            } else {
+            else
                 channel->setUserLimit(0); // set the user limit to 0
-            }
             break;
         default:
             sendMessageCommand(socket, intro() + "472 MODE : Unknown mode");
             break;
     }
-    channel->broadcastMessage(client.intro() + " MODE " + channel->getName() + " "  + (addMode ? "+" : "-") + modeStr + " " + (modeStr == "k" ? "********" : modeParams));
+    channel->broadcastMessage(client.intro() + "MODE " + channel->getName() + " "  + (addMode ? "+" : "-") + modeStr + " " + (modeStr == "k" ? "********" : modeParams));
 }

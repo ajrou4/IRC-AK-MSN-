@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:50:52 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 16:39:30 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,10 @@ void    Channel::addOperator(int socket) {
 }
 
 void Channel::setMode(ChannelMode KEY, bool value){
-    if(value){
+    if(value)
         mode |= (1 << KEY); // set the mode, means the mode is on
-    }
-    else{
+    else
         mode &= ~(1 << KEY); // unset the mode, means the mode is off
-    }
 }
 
 void Channel::setPassword(const std::string password){
@@ -142,8 +140,6 @@ void    Channel::addPlusV(int fd) {
     if (!hasPlusV(fd)) {
         // add the client to the channel
         plusVoices.push_back(fd);
-    } else {
-        std::cerr << "Client already in the channel" << std::endl;
     }
 }
 
@@ -157,6 +153,7 @@ void    Channel::removePlusV(int fd) {
 
 void    Channel::setUserLimit(int limit) {
     userLimit = limit;
+    setMode(Limit, true); // ensure the limit mode is set
 }
 
 int     Channel::getCountClient() const {
@@ -221,8 +218,12 @@ std::string Channel::getModes() const {
         modes += "m";
     if (getMode(Secret))
         modes += "s";
+    // if (getMode(Limit) && userLimit > 0) {
+    //     modes += " " + std::to_string(userLimit);  // Include the limit value
+    // }
     return modes;
 }
+
 
 int Channel::getLimit() const {
     return userLimit;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/07 00:56:02 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 04:34:58 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ public:
     std::string             intro(void);
 
     std::vector<Channel*>   getChannels(int client_fd);
-    void                    createChannel(std::string channel_name, std::string password, std::string topic = "No topic");
+    void                    createChannel(std::string channel_name, std::string password, std::string topic = "No topic is set");
 
     //                      register a new client.
     void                    registerNewClient(int socket);
