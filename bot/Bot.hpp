@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:48:58 by codespace         #+#    #+#             */
-/*   Updated: 2024/06/01 18:57:41 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/07 17:36:01 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Bot
         void connectToServer();
         void getChannels(Channel &channel);
         void run();
+        void lunchBot();
 };
 
 #endif
