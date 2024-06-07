@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:48:58 by codespace         #+#    #+#             */
-/*   Updated: 2024/06/07 17:38:24 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/07 19:19:29 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class Bot
         void connectToServer();
         void getChannels(Channel &channel);
         void run();
-        static void lunchBot();
+        static void lunchBot(int fd_client, std::vector<std::string> command);
 };
 
 #endif
