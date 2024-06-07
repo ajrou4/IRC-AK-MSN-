@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/06 04:20:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 01:31:15 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void    Server::InithandleComands(void) {
     commands["QUIT"] = &Server::QUIT;
     commands["KICK"] = &Server::KICK;
     commands["INVITE"] = &Server::INVITE;
-    commands["TOPIC "] = &Server::TOPIC;
+    commands["TOPIC"] = &Server::TOPIC;
     commands["ISON"] = &Server::ISON;
     commands["MODE"] = &Server::MODE;
 }
