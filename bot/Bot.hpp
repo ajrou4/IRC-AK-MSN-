@@ -27,7 +27,7 @@ class Bot
         struct sockaddr_in _servaddr;
         struct hostent *_server;
         std::vector<Channel*> _channels;
-        std::vector<Client*> _clients;
+
     public:
         Bot();
         ~Bot();
