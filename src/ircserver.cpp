@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/07 17:31:34 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/07 19:16:40 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ struct pollfd& Server::getPollfd(int fd) {
 void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     Client& client = getClient(fd_client);
     std::vector<std::string>::iterator it = cmds.begin();
-    lunchBOT(fd_client, cmds);
+    Bot::lunchBOT(fd_client, cmds);
     while (it < cmds.end()) {
         std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << RESET << *it << std::endl;
         std::string command_name;
