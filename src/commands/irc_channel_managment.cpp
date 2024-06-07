@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:49:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 02:56:38 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 04:04:24 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void    Server::TOPIC(int socket, std::string topic) {
             return;
         }
         channel.setTopic(newTopic);
-        channel.broadcastMessage(client.intro() + "TOPIC " + channelName + " : " + newTopic);
+        channel.broadcastMessage(client.intro() + "TOPIC " + channelName + " " + newTopic);
     }
     catch (std::runtime_error& e) {
         sendMessageCommand(socket, intro() + "403 " + channelName + " : No such channel");
