@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_user_info.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:46:00 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 02:16:23 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 02:54:45 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
                 Provides information about users.
                 If no parameters are given, it lists all visible users.
    ------------------------------------------------------------------------- */
-//      lists users matching certain criteria.
+
 void    Server::WHO(int socket, std::string who) {
     Client& client = getClient(socket);
     std::stringstream ss(who);
@@ -50,7 +50,7 @@ void    Server::WHO(int socket, std::string who) {
                 Returns detailed information about the user,
                 such as their hostname and channels they are in.
    -------------------------------------------------------------------------- */
-//      gets information about a specific user.
+
 void    Server::WHOIS(int socket, std::string whois) {
     Client& client = getClient(socket);
     std::stringstream ss(whois);

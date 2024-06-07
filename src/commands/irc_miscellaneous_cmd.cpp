@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_miscellaneous_cmd.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 04:25:36 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 02:57:31 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /* ----------------------------  ISON command --------------------------------
                 Returns a list of online users matching the given nicknames.
    --------------------------------------------------------------------------- */
-//      checks if a user is online.
+
 void    Server::ISON(int socket, std::string ison) {
     Client& client = getClient(socket);
     std::string nickname;
@@ -47,7 +47,7 @@ void    Server::ISON(int socket, std::string ison) {
             Can be used to set or check user modes (like operator status) 
             or channel modes (like moderation).
    --------------------------------------------------------------------------- */
-//      sets or checks modes for a user or channel.
+
 void    Server::MODE(int socket, std::string mode) {
     Client& client = getClient(socket);
     std::string target, modeStr, modeParams;

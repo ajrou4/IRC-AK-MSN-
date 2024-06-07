@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/07 01:31:15 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/07 02:57:36 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,37 @@ Server::~Server() {
 
 // initiale the command
 void    Server::InithandleComands(void) {
+    //                          sets a password for the connection. 
     commands["PASS"] = &Server::PASS;
+    //                          sets or changes the nickname of a user.
     commands["NICK"] = &Server::NICK;
+    //                          sends user information to the server.
     commands["USER"] = &Server::USER;
+    //                          lists all channels or channels matching a certain pattern
     commands["LIST"] = &Server::LIST;
+    //                          joins a user to a channel.
     commands["JOIN"] = &Server::JOIN;
+    //                          leaves a channel.
     commands["PART"] = &Server::PART;
+    //                        lists users matching certain criteria.
     commands["WHO"] = &Server::WHO;
+    //                          gets information about a specific user.
     commands["WHOIS"] = &Server::WHOIS;
+    //                          checks the connection between the client and the server.
     commands["PING"] = &Server::PING;
+    //                          sends a private message to a user or channel.
     commands["PRIVMSG"] = &Server::PRIVMSG;
+    //                          disconnects from the server
     commands["QUIT"] = &Server::QUIT;
+    //                        removes a user from a channel.
     commands["KICK"] = &Server::KICK;
+    //                          invites a user to a channel.
     commands["INVITE"] = &Server::INVITE;
+    //                          sets or gets the topic of a channel.
     commands["TOPIC"] = &Server::TOPIC;
+    //                          checks if a user is online.                      
     commands["ISON"] = &Server::ISON;
+    //                          sets or checks modes for a user or channel.      
     commands["MODE"] = &Server::MODE;
 }
 

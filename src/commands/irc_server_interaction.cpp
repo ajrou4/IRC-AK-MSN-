@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_server_interaction.cpp                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 17:03:42 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 01:26:47 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 02:55:06 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
     The server sends a PING message to check if the client is responsive.
     The client must respond with a PONG message.
    -----------------------------------------------------------------------*/
-//      checks the connection between the client and the server.
+
 void    Server::PING(int socket, std::string ping) {
     sendMessageCommand(socket, intro() + "PONG " + ping);
 }

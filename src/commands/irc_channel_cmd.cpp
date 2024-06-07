@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 00:57:38 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 02:55:27 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /* ----------------------------  LIST command ------------------------------
                     Shows channels and their topics.
    ------------------------------------------------------------------------- */
-//      lists all channels or channels matching a certain pattern
+
 void    Server::LIST(int socket, std::string) {
     Client  &client = getClient(socket);
 
@@ -38,7 +38,7 @@ void    Server::LIST(int socket, std::string) {
                     The user joins one or more channels,
                     optionally providing a key if required.
    ------------------------------------------------------------------------- */
-//      joins a user to a channel.
+
 void    Server::JOIN(int socket, std::string channelName) {
     Client& client = getClient(socket);
 
@@ -101,7 +101,7 @@ void    Server::JOIN(int socket, std::string channelName) {
                     Used for private communication with users 
                     or to send messages to channels.
    ---------------------------------------------------------------------------- */
-//      Sends a private message to a user or channel.
+
 void    Server::PRIVMSG(int socket, std::string privmsg) {
     Client& client = getClient(socket);
     std::string target, message;
@@ -141,7 +141,7 @@ void    Server::PRIVMSG(int socket, std::string privmsg) {
 /* ----------------------------  PART command ------------------------------
                         The user leaves one or more channels.
    ----------------------------------------------------------------------- */
-//       leaves a channel.
+
 void    Server::PART(int socket, std::string part) {
     Client& client = getClient(socket);
     std::stringstream ss(part); // create a stringstream from the message
@@ -169,7 +169,7 @@ void    Server::PART(int socket, std::string part) {
                 Ends the session with an optional message
             that is sent to all users in the channels the user was part of.
    ------------------------------------------------------------------------- */
-//      disconnects from the server
+
 void    Server::QUIT(int socket, std::string quit) {
     Client& client = getClient(socket);
     std::stringstream ss;

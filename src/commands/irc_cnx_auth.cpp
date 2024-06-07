@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_cnx_auth.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 16:35:49 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:59:45 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 02:51:46 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
     If the server requires a password,
     It must be sent before the NICK/USER commands.
    ----------------------------------------------- */
-//      sets a password for the connection.
+
 void    Server::PASS(int socket, std::string pass) {
     Client& client = getClient(socket);
     // Check if the client is already authenticated
@@ -39,7 +39,7 @@ void    Server::PASS(int socket, std::string pass) {
     Essential for user registration; 
     Identifies a user with a unique nickname.
    ----------------------------------------------- */
-//      sets or changes the nickname of a user.
+
 void    Server::NICK(int socket, std::string nickname) {
     Client& client = getClient(socket);
     // Check if the nickname is valid
@@ -66,7 +66,7 @@ void    Server::NICK(int socket, std::string nickname) {
     and real name of the user.
     This command, along with NICK, completes the registration.
    ------------------------------------------------------------ */
-//      sends user information to the server.
+
 void    Server::USER(int socket, std::string params) {
     Client& client = getClient(socket);
     std::string username, realname, skipChar;

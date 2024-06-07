@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_managment.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:49:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 23:59:03 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 02:56:38 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
                 A channel operator can kick out a user, 
                 optionally providing a reason.
    ------------------------------------------------------------------------- */
-//      removes a user from a channel.
+
 void    Server::KICK(int socket, std::string kick) {
     Client& client = getClient(socket);
     std::string channelName, target, message;
@@ -60,7 +60,7 @@ void    Server::KICK(int socket, std::string kick) {
                 Without a topic, it shows the current topic.
                 With a topic, it sets the new topic..
    -------------------------------------------------------------------------- */
-//      Sets or gets the topic of a channel.
+
 void    Server::TOPIC(int socket, std::string topic) {
     Client& client = getClient(socket);
     std::string channelName, newTopic;
@@ -98,7 +98,7 @@ void    Server::TOPIC(int socket, std::string topic) {
                 Used to invite a user to a channel
                 they are not currently a member of.
    -------------------------------------------------------------------------- */
-//      Invites a user to a channel.
+
 void    Server::INVITE(int socket, std::string invite) {
     Client& client = getClient(socket);
     std::string target, channelName;
