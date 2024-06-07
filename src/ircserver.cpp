@@ -218,7 +218,7 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     Client& client = getClient(fd_client);
     std::vector<std::string>::iterator it = cmds.begin();
     while (it < cmds.end()) {
-        std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << *it << RESET << std::endl;
+        std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << RESET << *it << std::endl;
         std::string command_name;
         std::string command_params;
         std::stringstream ss(*it);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_cmd.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:40:25 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 04:35:24 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/07 00:57:38 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,11 @@ void    Server::JOIN(int socket, std::string channelName) {
             sendMessageCommand(socket, intro() + "475 " + channel_name + " : Cannot join channel (+k)");
             return;
         }
-        if (channel.getMode(Limit) && channel.getCountClient() >= channel.getMode(Limit)) {
+        if (channel.getMode(Limit) && channel.getCountClient() >= channel.getLimit()) {
             sendMessageCommand(socket, intro() + "471 " + channel_name + " : Cannot join channel (+l)");
             return;
         }
-        if (channel.getMode(invit_ONLY) && !channel.hasClient(socket)) {
+        if (channel.getMode(invit_ONLY) && !channel.hasInvet(socket)) {
             sendMessageCommand(socket, intro() + "473 " + channel_name + " : Cannot join channel (+i)");
             return;
         }
@@ -81,7 +81,7 @@ void    Server::JOIN(int socket, std::string channelName) {
         if (channel.getCountClient() == 1) { // if the client is the first in the channel
             channel.addOperator(socket); // make the client an operator if they are the first in the channel
         }
-        channel.broadcastMessage(client.intro() + "JOIN" + channel_name);
+        channel.broadcastMessage(client.intro() + "JOIN " + channel_name);
         sendMessageCommand(socket, intro() + "332 " + client.getNick() + " " + channel_name + " : " + channel.getTopic());
         sendMessageCommand(socket, intro() + "353 " + client.getNick() + " = " + channel_name + " : " + channel.getClientsNicks());
         sendMessageCommand(socket, intro() + "324 " + client.getNick() + " " + channel_name + channel.getModes());
@@ -91,7 +91,7 @@ void    Server::JOIN(int socket, std::string channelName) {
         channel.addClient(socket); // add the client to the channel
         channel.addOperator(socket); // make the client an operator if they are the first in the channel
         channel.broadcastMessage(client.intro() + "JOIN " + channel_name);
-        sendMessageCommand(socket, intro() + "331 " + client.getNick() + " " + channel_name + " : No topic is set");
+        sendMessageCommand(socket, intro() + "331 " + client.getNick() + " " + channel_name + " :No topic is set");
         sendMessageCommand(socket, intro() + "353 " + client.getNick() + " = " + channel_name + " : " + channel.getClientsNicks());
         sendMessageCommand(socket, intro() + "324 " + client.getNick() + " " + channel_name + " " + channel.getModes());
     }
@@ -173,7 +173,7 @@ void    Server::PART(int socket, std::string part) {
 void    Server::QUIT(int socket, std::string quit) {
     Client& client = getClient(socket);
     std::stringstream ss;
-    ss << client.intro() << " QUIT : " << quit;
+    ss << client.intro() << "QUIT : " << quit;
     sendMessageToClientChannels(socket, ss.str());
     removeClient(socket);
 }

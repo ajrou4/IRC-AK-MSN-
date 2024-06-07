@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 16:35:49 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/06 01:18:57 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/06 23:59:45 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void    Server::NICK(int socket, std::string nickname) {
         sendMessageCommand(socket, intro() + "433 " + nickname + " : Nickname is already in use");
     } catch (std::runtime_error& e) {
         std::stringstream broadcastMessage;
-        broadcastMessage << client.intro() + " NICK " <<nickname; // broadcast the new nickname
+        broadcastMessage << client.intro() + "NICK " << nickname; // broadcast the new nickname
         if (client.getUserName() != "" && !client.isRegistered()) // if the client is not registered, register them
             registerNewClient(socket);
         client.setNick(nickname);
@@ -87,7 +87,7 @@ void    Server::USER(int socket, std::string params) {
         return;
     }
     std::stringstream broadcastMessage;
-    broadcastMessage << client.intro() << " USER " << params; // broadcast the new username
+    broadcastMessage << client.intro() << "USER " << params; // broadcast the new username
     client.setUserName(username);
     client.setRealName(realname);
     if (client.getNick() != "" && !client.isRegistered()) // if the client is not registered, register them
