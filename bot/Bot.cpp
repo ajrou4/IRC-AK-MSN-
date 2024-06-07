@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 10:03:54 by codespace         #+#    #+#             */
-/*   Updated: 2024/06/01 19:59:58 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/07 19:21:45 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,11 @@ void Bot::run() // This function that runs the bot
     // close the socket
     // close the bot
     Bot::connectToServer();
+}
+
+void Bot::lunchBot(int fd_client, std::vector<std::string> command) // This function that lunches the bot
+{
+
 }
 
 /*
