@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Ircserver.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:07:01 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ public:
     void                    TOPIC(int socket, std::string topic);
     void                    ISON(int socket, std::string ison);
     void                    MODE(int socket, std::string mode);
-
+    int                     string_toInt(const std::string& input);
     // destructor:
     ~Server();
 

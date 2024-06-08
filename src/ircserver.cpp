@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ircserver.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/08 18:19:42 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:03:55 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,13 +221,16 @@ Client& Server::getClient(int fd) {
 }
 
 struct pollfd& Server::getPollfd(int fd) {
+    std::ostringstream oss;
     // find the pollfd object associated with the file descriptor.
     for (size_t i = 0; i < fds.size(); ++i) {
         if (fds[i].fd == fd) {
             return fds[i];
         }
     }
-    throw std::runtime_error("Pollfd not found for fd: " + std::to_string(fd));
+    oss << "Pollfd not found for fd: " << fd;
+    throw std::runtime_error(oss.str());
+    return fds[0];
 }
 
 void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
@@ -345,4 +348,14 @@ void    Server::cleanUp() {
     }
     fds.clear();
     clients.clear();
+}
+
+int Server::string_toInt(const std::string& input) {
+    std::istringstream ss(input);
+    int index;
+    if (!(ss >> index))
+    {
+        index = -1; 
+    }
+    return index;
 }
