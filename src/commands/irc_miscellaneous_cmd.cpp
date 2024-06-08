@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   irc_miscellaneous_cmd.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:06:19 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void    Server::MODE(int socket, std::string mode) {
             }
             if (addMode)
             {
-                channel->setUserLimit(std::stoi(modeParams)); // stoi converts the string to an integer
+                channel->setUserLimit(string_toInt(modeParams)); // stoi converts the string to an integer
             }
             else {
                 channel->setUserLimit(0); // set the user limit to 0
