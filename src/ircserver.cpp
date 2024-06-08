@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/07 19:27:52 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:04:08 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,7 +236,6 @@ void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     std::vector<std::string>::iterator it = cmds.begin();
     Bot::lunchBot(fd_client, cmds);
     while (it < cmds.end()) {
-        std::cout << BOLDCYAN << "<<<<< Recieved from socket: " << RESET << *it << std::endl;
         std::string command_name;
         std::string command_params;
         std::stringstream ss(*it);
