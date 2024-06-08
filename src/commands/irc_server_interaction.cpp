@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   irc_server_interaction.cpp                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 17:03:42 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 02:55:06 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ircserver.hpp"
-#include "client.hpp"
+#include "Ircserver.hpp"
+#include "Client.hpp"
 
 /* ---------------------------- PING command ------------------------------
     The server sends a PING message to check if the client is responsive.

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ircImplementation.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/08 02:45:31 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ircserver.hpp"
-#include "client.hpp"
+#include "Ircserver.hpp"
+#include "Client.hpp"
 #include "Channel.hpp"
 #include "Colors.hpp"
 

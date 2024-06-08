@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:08 by omakran           #+#    #+#             */
-/*   Updated: 2024/05/21 21:49:40 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:19:42 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ircserver.hpp"
+#include "Ircserver.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {

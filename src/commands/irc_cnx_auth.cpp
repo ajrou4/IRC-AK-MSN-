@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   irc_cnx_auth.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 16:35:49 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 02:51:46 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hpp"   
-#include "ircserver.hpp"
+#include "Client.hpp"   
+#include "Ircserver.hpp"
 
 
 /* ---------------- PASS command ---------------
