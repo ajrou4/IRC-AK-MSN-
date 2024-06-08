@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/08 18:17:16 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:17:45 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,6 @@ struct pollfd& Server::getPollfd(int fd) {
 void    Server::commandsProcess(std::vector<std::string> cmds, int fd_client) {
     Client& client = getClient(fd_client);
     std::vector<std::string>::iterator it = cmds.begin();
-    Bot::lunchBot(fd_client, cmds);
     while (it < cmds.end()) {
         std::string command_name;
         std::string command_params;
