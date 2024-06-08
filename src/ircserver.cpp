@@ -6,11 +6,11 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:05 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/08 18:17:45 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:19:42 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ircserver.hpp"
+#include "Ircserver.hpp"
 #include "Channel.hpp"
 #include "Colors.hpp"
 

@@ -6,7 +6,7 @@
 /*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:39:36 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/08 18:15:08 by haguezou         ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # include <arpa/inet.h> // for inet_ntoa
 # include <string>
 
-# include "client.hpp"
+# include "Client.hpp"
 # include "Channel.hpp"
 
 class Client;

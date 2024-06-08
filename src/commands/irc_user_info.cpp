@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   irc_user_info.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:46:00 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 02:54:45 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hpp"
-#include "ircserver.hpp"
+#include "Client.hpp"
+#include "Ircserver.hpp"
 
 /* ----------------------------  WHO command ------------------------------
                 Provides information about users.

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   irc_miscellaneous_cmd.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:53:09 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 19:27:05 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hpp"
-#include "ircserver.hpp"
+#include "Client.hpp"
+#include "Ircserver.hpp"
 
 /* ----------------------------  ISON command --------------------------------
                 Returns a list of online users matching the given nicknames.

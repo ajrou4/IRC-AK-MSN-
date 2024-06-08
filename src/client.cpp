@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 00:45:48 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/06 23:00:41 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:40 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/client.hpp"
+#include "Client.hpp"
 
 Client::Client(int _fd, std::string _ip, std::string _hostname)
 : fd(_fd), ip(_ip), hostname(_hostname), inboundBuffer(""), outboundBuffer(""), realname("unknown"), authenticated(false), registered(false) {

@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   irc_channel_managment.cpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:49:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 04:04:24 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "client.hpp"
-#include "ircserver.hpp"
+#include "Client.hpp"
+#include "Ircserver.hpp"
 
 /* ----------------------------  KICK command ------------------------------
                 A channel operator can kick out a user, 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 10:50:47 by majrou            #+#    #+#             */
-/*   Updated: 2024/06/07 16:35:18 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
 # include <string>
 # include <netdb.h>
 # include <cstring>
-# include "client.hpp"
-# include "ircserver.hpp"
+# include "Client.hpp"
+# include "Ircserver.hpp"
 
 class Client; // we use forward declaration to avoid circular dependency (thats means we include client.hpp in Channel.cpp because we use Client class in Channel.cpp and Client is not yet defined in Channel.hpp)
 class Server;

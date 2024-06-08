@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: omakran <omakran@student.42.fr>            +#+  +:+       +#+        */
+/*   By: haguezou <haguezou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 22:45:45 by haguezou          #+#    #+#             */
-/*   Updated: 2024/06/07 19:47:55 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 18:20:04 by haguezou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Channel.hpp"
-#include "client.hpp"
+#include "Client.hpp"
 
 Channel::Channel() : name(""), password(""), userLimit(0), mode(0), server(NULL) {}
 
