@@ -6,7 +6,7 @@
 /*   By: omakran <omakran@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 17:36:11 by omakran           #+#    #+#             */
-/*   Updated: 2024/06/06 01:21:46 by omakran          ###   ########.fr       */
+/*   Updated: 2024/06/08 02:45:31 by omakran          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,5 @@ void    Server::registerNewClient(int socket) {
 void    Server::sendMessageCommand(int socket, const std::string& message){
     Client& client = getClient(socket);
     client.newMessage(message);
-    std::cout << BOLDGREEN << ">>>>> Sending into socket " << RESET << message << std::endl;
     getPollfd(socket).events |= POLLOUT; // set the POLLOUT event for the socket
 }
